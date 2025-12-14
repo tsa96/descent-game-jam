@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://dw65gvb6hrfpb"]
+
+[node name="DebugUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 22.0
+offset_right = 490.0
+offset_bottom = 228.0
+columns = 2
+
+[node name="Regenerate" type="Button" parent="GridContainer"]
+layout_mode = 2
+text = "Regenerate
+"
+
+[node name="Perf" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+
+[node name="SeedLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Seed"
+
+[node name="SeedInput" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+
+[node name="WidthLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Width"
+
+[node name="WidthInput" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+
+[node name="HeightLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Height"
+
+[node name="HeightInput" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+
+[node name="StartingRockLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Starting Rock Chance"
+
+[node name="StartingRockInput" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
+
+[node name="ItersLabel" type="Label" parent="GridContainer"]
+layout_mode = 2
+text = "Automata Iterations"
+
+[node name="ItersInput" type="LineEdit" parent="GridContainer"]
+layout_mode = 2
