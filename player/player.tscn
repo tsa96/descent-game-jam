@@ -181,7 +181,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="11"]
-size = Vector2(42.5, 54.5)
+size = Vector2(30.00002, 54.5)
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.8, 0.8)
@@ -209,8 +209,18 @@ libraries = {
 &"": SubResource("AnimationLibrary_jnr5f")
 }
 
+[node name="Camera" type="Camera2D" parent="."]
+position = Vector2(0, -28)
+offset = Vector2(0, 50)
+process_callback = 0
+limit_left = -715
+limit_top = -250
+limit_right = 1425
+limit_bottom = 690
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -14)
+position = Vector2(8.94063e-08, -13.999972)
+scale = Vector2(0.99999905, 0.99999905)
 shape = SubResource("11")
 
 [node name="Jump" type="AudioStreamPlayer2D" parent="."]
@@ -245,13 +255,3 @@ position = Vector2(1870, 564)
 scale = Vector2(2, 2)
 action = "shoot"
 visibility_mode = 1
-
-[node name="Camera" type="Camera2D" parent="."]
-position = Vector2(0, -27.999996)
-scale = Vector2(0.99999994, 0.99999994)
-offset = Vector2(0, 50)
-process_callback = 0
-limit_left = -715
-limit_top = -250
-limit_right = 1425
-limit_bottom = 690
