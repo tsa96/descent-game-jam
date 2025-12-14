@@ -1,4 +1,4 @@
-class_name WorldGenerator
+class_name WorldGeneration
 extends Node
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -10,7 +10,6 @@ var texture := AtlasTexture.new()
 var tile_map := TileMapLayer.new()
 var tile_set := TileSet.new()
 var source := TileSetAtlasSource.new()
-
 
 
 func _ready() -> void:
