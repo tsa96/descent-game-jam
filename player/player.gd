@@ -30,7 +30,7 @@ func _physics_process(delta: float) -> void:
 		# The player let go of jump early, reduce vertical momentum.
 		velocity.y *= 0.6
 	# Fall.
-#	velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)
+	velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)
 
 	var direction := Input.get_axis("move_left" + action_suffix, "move_right" + action_suffix) * WALK_SPEED
 	velocity.x = move_toward(velocity.x, direction, ACCELERATION_SPEED * delta)
