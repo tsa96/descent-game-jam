@@ -1,7 +1,6 @@
 class_name Player
 extends CharacterBody2D
 
-
 const WALK_SPEED = 300.0
 const ACCELERATION_SPEED = WALK_SPEED * 6.0
 const JUMP_VELOCITY = -725.0
@@ -19,7 +18,6 @@ var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 @onready var jump_sound := $Jump as AudioStreamPlayer2D
 @onready var camera := $Camera as Camera2D
 var _double_jump_charged: bool = false
-
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
@@ -48,7 +46,6 @@ func _physics_process(delta: float) -> void:
 	if animation != animation_player.current_animation:
 		animation_player.play(animation)
 
-
 func get_new_animation() -> String:
 	var animation_new: String
 	if is_on_floor():
@@ -63,7 +60,6 @@ func get_new_animation() -> String:
 			animation_new = "jumping"
 	return animation_new
 
-
 func try_jump() -> void:
 	if is_on_floor():
 		jump_sound.pitch_scale = 1.0
@@ -75,3 +71,7 @@ func try_jump() -> void:
 		return
 	velocity.y = JUMP_VELOCITY
 	jump_sound.play()
+
+func reset() -> void:
+	position.x = 16;
+	position.y = 0;	

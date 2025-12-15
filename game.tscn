@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=8 format=3 uid="uid://d2usby77vaxdw"]
 
-[ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator.cs" id="1_fc0e3"]
+[ext_resource type="Script" uid="uid://cmfap8ewr61k2" path="res://game.gd" id="1_7jktm"]
+[ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://dsqy8lxrpip13" path="res://player/player.tscn" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://budit7ttswd8s" path="res://assets/tileset.png" id="3_feb5d"]
-[ext_resource type="PackedScene" uid="uid://dw65gvb6hrfpb" path="res://ui/debug/debug_ui.tscn" id="4_fc0e3"]
+[ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 resource_name = "Pog"
@@ -1550,15 +1551,97 @@ physics_layer_0/collision_layer = 2
 sources/0 = SubResource("TileSetAtlasSource_fc0e3")
 
 [node name="Game" type="Node"]
+script = ExtResource("1_7jktm")
+
+[node name="World" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_7jktm")
 script = ExtResource("1_fc0e3")
 
-[node name="Player" parent="." instance=ExtResource("2_feb5d")]
+[node name="Player" parent="World" instance=ExtResource("2_feb5d")]
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_set = SubResource("TileSet_7jktm")
+[node name="Interface" type="CanvasLayer" parent="."]
 
-[node name="DebugUI" parent="." instance=ExtResource("4_fc0e3")]
-offset_left = -715.0
-offset_top = -270.0
-offset_right = -715.0
-offset_bottom = -270.0
+[node name="PauseMenu" type="Control" parent="Interface"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 333.0
+offset_right = 680.0
+offset_bottom = 373.0
+script = ExtResource("5_7jktm")
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Interface/PauseMenu"]
+layout_mode = 1
+offset_left = -640.0
+offset_top = -333.0
+offset_right = 640.0
+offset_bottom = 389.0
+color = Color(0, 0, 0, 0.19607843)
+
+[node name="PausedLabel" type="Label" parent="Interface/PauseMenu/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -203.22192
+offset_top = -206.0
+offset_right = 203.22192
+offset_bottom = 20.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 80
+text = "paws"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/PauseMenu/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.70000005
+anchor_right = 0.5
+anchor_bottom = 0.70000005
+offset_left = -162.0
+offset_top = -127.00006
+offset_right = 165.0
+offset_bottom = 125.99994
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResumeButton" type="Button" parent="Interface/PauseMenu/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Resume"
+
+[node name="Quit" type="Button" parent="Interface/PauseMenu/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Quit"
+
+[node name="Debug" type="Control" parent="Interface"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 6.0
+offset_top = 7.0
+offset_right = 46.0
+offset_bottom = 47.0
+
+[node name="GridContainer" type="GridContainer" parent="Interface/Debug"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 22.0
+offset_right = 490.0
+offset_bottom = 228.0
+columns = 2
+
+[node name="RegenButton" type="Button" parent="Interface/Debug/GridContainer"]
+layout_mode = 2
+text = "Regenerate
+"
+
+[node name="PerfLabel" type="Label" parent="Interface/Debug/GridContainer"]
+layout_mode = 2
+text = ":)"
