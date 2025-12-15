@@ -49,6 +49,20 @@ public partial class WorldGenerator
                         grid.Cell(X - i, Y) = f;
                         grid.Cell(X + i, Y) = f;
                     }
+
+                    // Clear out space above us as well - I *think* unless muncher
+                    // happens to add stuff or we get weird margin issues, we should always
+                    // get transferable gaps for our player size and hole size of 2.
+                    if (Y > 0)
+                    {
+                        grid.Cell(X, Y - 1) = 1.0f;
+                        for (int i = 1; i < width; i++)
+                        {
+                            float f = 1.0f - width * MoleHoleFalloff.Value;
+                            grid.Cell(X - i, Y - 1) = f;
+                            grid.Cell(X + i, Y - 1) = f;
+                        }
+                    }
                 }
                 else
                 {
