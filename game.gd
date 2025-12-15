@@ -3,7 +3,6 @@ extends Node
 
 @onready var world := $World
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
-@onready var player := $World/Player as Player
 
 func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_fullscreen"):
@@ -25,4 +24,3 @@ func _unhandled_input(input_event: InputEvent) -> void:
 
 	elif input_event.is_action_pressed(&"reset"):
 		$World.Generate()
-		player.reset()

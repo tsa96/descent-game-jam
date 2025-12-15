@@ -8,7 +8,7 @@ public partial class WorldGenerator
     static Button RegenButton;
 
     static DynamicIntVariable Seed;
-    static DynamicIntVariable ChunksToGenerate;
+    static DynamicIntVariable StartingChunkCount;
     static DynamicFloatVariable AirThresold;
     static DynamicIntVariable SideMargin;
     static DynamicFloatVariable SideMarginFadeFactor;
@@ -37,24 +37,24 @@ public partial class WorldGenerator
 
         // if Empty / 0 we generate a random seed
         Seed = new DynamicIntVariable("Seed", 0);
-        ChunksToGenerate = new DynamicIntVariable("Chunks", 1);
+        StartingChunkCount = new DynamicIntVariable("Starting Chunk Count", 64);
         // Bit pointless as Mole works best when setting everything to very high strength
         AirThresold = new DynamicFloatVariable("Air Threshold", 0.5f);
-        SideMargin = new DynamicIntVariable("Side Margin", 1);
+        SideMargin = new DynamicIntVariable("Side Margin", 2);
         // Attemping to smooth out the sections where we block off the sides a bit. This is multipled
         // by current cell strength * distance from edge * randf. Quick high values look pretty good!
-        SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.4f);
+        SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.5f);
         MoleStartCount = new DynamicIntVariable("Mole Start Count", 2);
-        MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.01f);
+        MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.075f);
         // Logic for this needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
         // Always merging seems to work really well though.
         MoleMergeChance = new DynamicFloatVariable("Mole Merge Chance", 1.0f);
         // If lower than 3 we can get sections that are very awkward to fit through.
         // If lowering, decrease muncher neighbour mins.
-        MoleHoleSize = new DynamicIntVariable("Mole Hole Size", 3);
+        MoleHoleSize = new DynamicIntVariable("Mole Hole Size", 2);
         // Meh, bit useless
         MoleHoleFalloff = new DynamicFloatVariable("Mole Hole Falloff", 0.1f);
-        MolePreviousDirMult = new DynamicFloatVariable("Mole Previous Dir Mult", 0.6f);
+        MolePreviousDirMult = new DynamicFloatVariable("Mole Previous Dir Mult", 0.1f);
         // Disabling this and upping previous dir mult gives extra snakiness but might be a bit much,
         // normal dist is good at encouraging moles downwards. Seems like mangler noise is just as good
         // for extra snaking anyway!
@@ -70,7 +70,7 @@ public partial class WorldGenerator
         ManglerStrengthMult = new DynamicFloatVariable("Mangler Strength Mult", 3.5f);
         // More iters smooth out the terrain, but are the main performance hit of the entire generator (currently).
         // Might be able to speed up in the future with small chunks and better cache locality, idk.
-        MuncherIters = new DynamicIntVariable("Muncher Iterations", 5);
+        MuncherIters = new DynamicIntVariable("Muncher Iterations", 7);
         // Generally, keep air slightly lower (e.g. 1) than rock.
         MuncherAirNeighbours = new DynamicIntVariable("Muncher Air Neighbours Min", 4);
         MuncherRockNeighbours = new DynamicIntVariable("Muncher Rock Neighbours Min", 5);

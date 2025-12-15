@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Chunk = float[,];
 
 public partial class WorldGenerator
 {
@@ -10,11 +11,9 @@ public partial class WorldGenerator
         // 0 is downwards dir, -1 left, 1 right.
         float Direction { get; set; } = 0;
 
-        // Warning: I'l allowed to modify the moles list! Chaos ahead!
+        // Warning: I'm allowed to modify the moles list! Chaos ahead!
         public void DigChunk(Chunk chunk, List<Mole> moles)
         {
-            Grid grid = chunk.Grid;
-
             int width = MoleHoleSize.Value;
             int side = SideMargin.Value;
             if (width <= 0)
@@ -40,14 +39,14 @@ public partial class WorldGenerator
                 if (Y < 0)
                     Y = 0;
 
-                if (Y < ChunkHeight - 1)
+                if (Y < ChunkHeight)
                 {
-                    grid.Cell(X, Y) = 1.0f;
+                    chunk[X, Y] = 1.0f;
                     for (int i = 1; i < width; i++)
                     {
                         float f = 1.0f - width * MoleHoleFalloff.Value;
-                        grid.Cell(X - i, Y) = f;
-                        grid.Cell(X + i, Y) = f;
+                        chunk[X - i, Y] = f;
+                        chunk[X + i, Y] = f;
                     }
 
                     // Clear out space above us as well - I *think* unless muncher
@@ -55,12 +54,12 @@ public partial class WorldGenerator
                     // get transferable gaps for our player size and hole size of 2.
                     if (Y > 0)
                     {
-                        grid.Cell(X, Y - 1) = 1.0f;
+                        chunk[X, Y - 1] = 1.0f;
                         for (int i = 1; i < width; i++)
                         {
                             float f = 1.0f - width * MoleHoleFalloff.Value;
-                            grid.Cell(X - i, Y - 1) = f;
-                            grid.Cell(X + i, Y - 1) = f;
+                            chunk[X - i, Y - 1] = f;
+                            chunk[X + i, Y - 1] = f;
                         }
                     }
                 }
@@ -72,7 +71,7 @@ public partial class WorldGenerator
 
                 TrySpawnNewMole(chunk, moles, lastMovedX);
 
-                if (CheckDied(grid))
+                if (CheckDied(chunk))
                 {
                     moles.Remove(this);
                     return;
@@ -131,13 +130,13 @@ public partial class WorldGenerator
             newMole.DigChunk(chunk, moles);
         }
 
-        bool CheckDied(Grid grid)
+        bool CheckDied(Chunk chunk)
         {
             // Moles run first, so if we encounter open space below us, some other mole was here first
             if (Y == ChunkHeight - 1)
                 return false;
 
-            if (grid.Cell(X - MoleHoleSize.Value, Y + 1) >= 1.0f || grid.Cell(X + MoleHoleSize.Value, Y + 1) >= 1.0f)
+            if (chunk[X - MoleHoleSize.Value, Y + 1] >= 1.0f || chunk[X + MoleHoleSize.Value, Y + 1] >= 1.0f)
             {
                 // Gadzooks! We died.
                 return (Random.Randf() < MoleMergeChance.Value);
