@@ -11,6 +11,7 @@ public partial class WorldGenerator
     static DynamicIntVariable ChunksToGenerate;
     static DynamicFloatVariable AirThresold;
     static DynamicIntVariable SideMargin;
+    static DynamicFloatVariable SideMarginFadeFactor;
     static DynamicIntVariable MoleStartCount;
     static DynamicFloatVariable MoleSpawnChance;
     static DynamicFloatVariable MoleMergeChance;
@@ -39,7 +40,10 @@ public partial class WorldGenerator
         ChunksToGenerate = new DynamicIntVariable("Chunks", 1);
         // Bit pointless as Mole works best when setting everything to very high strength
         AirThresold = new DynamicFloatVariable("Air Threshold", 0.5f);
-        SideMargin = new DynamicIntVariable("Side Margin", 0);
+        SideMargin = new DynamicIntVariable("Side Margin", 1);
+        // Attemping to smooth out the sections where we block off the sides a bit. This is multipled
+        // by current cell strength * distance from edge * randf. Quick high values look pretty good!
+        SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.4f);
         MoleStartCount = new DynamicIntVariable("Mole Start Count", 2);
         MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.01f);
         // Logic for this needs more work for < 1 chance to work well, might be able to perform check earlier in iter?

@@ -73,6 +73,8 @@ public partial class WorldGenerator : TileMapLayer
         Mangler mangler = new();
         mangler.MangleChunk(chunk);
 
+        AddEdgeBoundary(chunk);
+
         Muncher muncher = new();
         muncher.EatChunk(chunk);
 
@@ -99,10 +101,27 @@ public partial class WorldGenerator : TileMapLayer
         )
             ? type
             : FastNoiseLite.NoiseTypeEnum.Perlin;
+
         ManglerNoise.Frequency = ManglerFrequency.Value;
     }
 
-    static readonly Vector2I tmp = new Vector2I(0, 4);
+    static readonly Vector2I tmp = new Vector2I(0, 0);
+
+    void AddEdgeBoundary(Chunk chunk)
+    {
+        for (int x = 0; x < SideMargin.Value; x++)
+        {
+            for (int y = 0; y < ChunkHeight; y++)
+            {
+                chunk.Grid.Cell(x, y) = chunk.Grid.Cell(x, y) * x * SideMarginFadeFactor.Value * Random.Randf();
+                chunk.Grid.Cell(ChunkWidth - x - 1, y) =
+                    chunk.Grid.Cell(ChunkWidth - x - 1, y)
+                    * (SideMargin.Value - 1)
+                    * SideMarginFadeFactor.Value
+                    * Random.Randf();
+            }
+        }
+    }
 
     void WriteTileMap(Chunk chunk, int depth)
     {
