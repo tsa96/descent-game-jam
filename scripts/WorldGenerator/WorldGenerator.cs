@@ -105,8 +105,6 @@ public partial class WorldGenerator : TileMapLayer
         ManglerNoise.Frequency = ManglerFrequency.Value;
     }
 
-    static readonly Vector2I tmp = new Vector2I(0, 0);
-
     void AddEdgeBoundary(Chunk chunk)
     {
         for (int x = 0; x < SideMargin.Value; x++)
@@ -116,12 +114,14 @@ public partial class WorldGenerator : TileMapLayer
                 chunk.Grid.Cell(x, y) = chunk.Grid.Cell(x, y) * x * SideMarginFadeFactor.Value * Random.Randf();
                 chunk.Grid.Cell(ChunkWidth - x - 1, y) =
                     chunk.Grid.Cell(ChunkWidth - x - 1, y)
-                    * (SideMargin.Value - 1)
+                    * (SideMargin.Value - x)
                     * SideMarginFadeFactor.Value
                     * Random.Randf();
             }
         }
     }
+
+    static readonly Vector2I tmp = new Vector2I(0, 0);
 
     void WriteTileMap(Chunk chunk, int depth)
     {
