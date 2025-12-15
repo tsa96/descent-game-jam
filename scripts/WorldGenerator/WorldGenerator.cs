@@ -34,22 +34,13 @@ public partial class WorldGenerator : TileMapLayer
     const int ChunkHalfWidth = ChunkWidth / 2;
     const int MaxMoles = 8;
 
-    static RandomNumberGenerator Random = new RandomNumberGenerator();
-    static FastNoiseLite ManglerNoise = new FastNoiseLite();
-
-    static GridContainer DebugContainer;
-
-    TileMapLayer _world;
-    Label _perfLabel;
-    Button _regenButton;
+    static readonly RandomNumberGenerator Random = new RandomNumberGenerator();
+    static readonly FastNoiseLite ManglerNoise = new FastNoiseLite();
 
     public override void _Ready()
     {
-        Random = new RandomNumberGenerator();
-
         InitializeSettings();
         Generate();
-
         base._Ready();
     }
 
@@ -88,7 +79,7 @@ public partial class WorldGenerator : TileMapLayer
         int chunksDeep = 0;
         WriteTileMap(chunk, chunksDeep);
 
-        _perfLabel.Text = $"Generated world in {Time.GetTicksMsec() - startTime}ms";
+        PerfLabel.Text = $"Generated world in {Time.GetTicksMsec() - startTime}ms";
     }
 
     void SeedNoise()

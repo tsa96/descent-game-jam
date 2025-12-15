@@ -3,6 +3,10 @@ using Godot;
 
 public partial class WorldGenerator
 {
+    static GridContainer DebugContainer;
+    static Label PerfLabel;
+    static Button RegenButton;
+
     static DynamicIntVariable Seed;
     static DynamicIntVariable ChunksToGenerate;
     static DynamicFloatVariable AirThresold;
@@ -26,9 +30,9 @@ public partial class WorldGenerator
     {
         DebugContainer = GetNode<GridContainer>("../Interface/Debug/GridContainer");
 
-        _perfLabel = GetNode<Label>("../Interface/Debug/GridContainer/PerfLabel");
-        _regenButton = GetNode<Button>("../Interface/Debug/GridContainer/RegenButton");
-        _regenButton.Pressed += Generate;
+        PerfLabel = GetNode<Label>("../Interface/Debug/GridContainer/PerfLabel");
+        RegenButton = GetNode<Button>("../Interface/Debug/GridContainer/RegenButton");
+        RegenButton.Pressed += Generate;
 
         // if Empty / 0 we generate a random seed
         Seed = new DynamicIntVariable("Seed", 0);
