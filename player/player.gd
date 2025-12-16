@@ -5,7 +5,9 @@ const WALK_SPEED = 300.0
 const ACCELERATION_SPEED = WALK_SPEED * 6.0
 const JUMP_VELOCITY = -725.0
 ## Maximum speed at which the player can fall.
-const TERMINAL_VELOCITY = 700
+const TERMINAL_VELOCITY = 700.0
+const DASH_SPEED = 700.0
+
 
 ## The player listens for input actions appended with this suffix.[br]
 ## Used to separate controls for multiple players in splitscreen.
@@ -18,20 +20,30 @@ var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 @onready var jump_sound := $Jump as AudioStreamPlayer2D
 @onready var camera := $Camera as Camera2D
 var _double_jump_charged: bool = false
+var _dash_charged: bool = false
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		_double_jump_charged = true
+		_dash_charged = true 
 	if Input.is_action_just_pressed("jump" + action_suffix):
 		try_jump()
 	elif Input.is_action_just_released("jump" + action_suffix) and velocity.y < 0.0:
 		# The player let go of jump early, reduce vertical momentum.
 		velocity.y *= 0.6
 	# Fall.
-	velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)
+	velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)	
+
+	if Input.is_action_just_pressed("fall" + action_suffix):
+		velocity.y = TERMINAL_VELOCITY 
+		# Player presses the fall key and falls faster after jumping
 
 	var direction := Input.get_axis("move_left" + action_suffix, "move_right" + action_suffix) * WALK_SPEED
 	velocity.x = move_toward(velocity.x, direction, ACCELERATION_SPEED * delta)
+
+	if Input.is_action_just_pressed("dash" + action_suffix) and _dash_charged:
+		velocity.x = direction + DASH_SPEED
+		$DashTimer.start()
 
 	if not is_zero_approx(velocity.x):
 		if velocity.x > 0.0:
@@ -75,3 +87,7 @@ func try_jump() -> void:
 func reset() -> void:
 	position.x = 16;
 	position.y = 0;	
+
+
+func _on_dash_timer_timeout() -> void:
+	_dash_charged = false
