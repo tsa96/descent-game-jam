@@ -39,7 +39,8 @@ public partial class WorldGenerator : Node2D
 	int CleanupTracker = 0;
 
 	Node2D LayerContainer;
-	static TileMapLayer LayerTemplate;
+	static TileSet LayerTileSet;
+	static Vector2 LayerScale;
 	ConcurrentQueue<TileMapLayer> LayerQueue = new();
 	CancellationTokenSource LayerThreadCts = new();
 
@@ -52,8 +53,11 @@ public partial class WorldGenerator : Node2D
 	{
 		Player = GetNode<CharacterBody2D>("Player");
 		LayerContainer = GetNode<Node2D>("TileMapContainer");
-		LayerTemplate = GetNode<TileMapLayer>("TileMapTemplateLayer");
-		LayerTemplate.Enabled = false;
+
+		// Can't access .Scale from tp thread for some reason (but we can with tileset ??)
+		var layerTemplate = GetNode<TileMapLayer>("TileMapTemplateLayer");
+		LayerTileSet = layerTemplate.TileSet;
+		LayerScale = layerTemplate.Scale;
 
 		InitializeSettings();
 		ResetWorld();
