@@ -2,13 +2,15 @@ class_name Game
 extends Node
 
 @onready var world := $World
-@onready var player := $World/Player as CharacterBody2D
+@onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
+
 
 # Completely reset game state. Bye!
 func reset() -> void:
-	$World.ResetWorld()
-	player.position = Vector2(0, 0)
+	world.ResetWorld()
+	player.reset()
+
 
 func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_fullscreen"):

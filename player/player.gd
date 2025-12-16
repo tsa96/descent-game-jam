@@ -1,46 +1,67 @@
 class_name Player
 extends CharacterBody2D
 
-const WALK_SPEED = 300.0
-const ACCELERATION_SPEED = WALK_SPEED * 6.0
-const JUMP_VELOCITY = -725.0
-## Maximum speed at which the player can fall.
-const TERMINAL_VELOCITY = 700.0
+const SANITY_MAX = 100.0
+var sanity: float
+
+const WALK_SPEED = 240.0
+const WALK_ACCEL = WALK_SPEED * 6.0
 const DASH_SPEED = 700.0
-
-
+const JUMP_VELOCITY = -525.0
+const TERMINAL_VELOCITY = 500.0
+const FAST_FALL_MULT = 0.7
+const FAST_FALL_RECOVER_MULT = 1.5
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
+var dash_charged: bool
+
 @onready var platform_detector := $PlatformDetector as RayCast2D
 @onready var animation_player := $AnimationPlayer as AnimationPlayer
 @onready var sprite := $Sprite2D as Sprite2D
 @onready var jump_sound := $Jump as AudioStreamPlayer2D
 @onready var camera := $Camera as Camera2D
-var _double_jump_charged: bool = false
-var _dash_charged: bool = false
+
+func _ready() -> void:
+	reset()
+
+
+func reset() -> void:
+	sanity = SANITY_MAX
+	velocity = Vector2(0, 0)
+	position = Vector2(16, 0)
+	dash_charged = false
+	jump_sound.stop()
 
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
-		_double_jump_charged = true
-		_dash_charged = true 
+		dash_charged = true
+		
+	# Jumping
 	if Input.is_action_just_pressed("jump"):
 		try_jump()
 	elif Input.is_action_just_released("jump") and velocity.y < 0.0:
-		# The player let go of jump early, reduce vertical momentum.
+		# The player let go of jump early, reduce vertical momentum
 		velocity.y *= 0.6
-	# Fall.
-	velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)	
+		
+	# Falling
+	if Input.is_action_pressed("fall"):
+		# Fast-falling: allowed to exceed TV, acceleration even greater
+		velocity.y = velocity.y + gravity * delta * FAST_FALL_MULT
+	elif velocity.y > TERMINAL_VELOCITY - 0.001:
+		# Speed exceeds TV; we must have just stopped fast-falling, decelerate towards TV
+		velocity.y = velocity.y - gravity * delta * FAST_FALL_RECOVER_MULT
+	else:
+		# Regular falling, accelarate towards to TV
+		velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)	
 
-	if Input.is_action_just_pressed("fall"):
-		velocity.y = TERMINAL_VELOCITY 
-		# Player presses the fall key and falls faster after jumping
+	# A/D movement
+	var direction := Input.get_axis("move_left", "move_right")
+	velocity.x = move_toward(velocity.x, direction * WALK_SPEED, WALK_ACCEL * delta)
 
-	var direction := Input.get_axis("move_left", "move_right") * WALK_SPEED
-	velocity.x = move_toward(velocity.x, direction, ACCELERATION_SPEED * delta)
-
-	if Input.is_action_just_pressed("dash") and _dash_charged:
-		velocity.x = direction + DASH_SPEED
-		$DashTimer.start()
+	# Dash
+	if Input.is_action_just_pressed("dash") and dash_charged and direction != 0:
+		velocity.x = direction * DASH_SPEED
+		dash_charged = false
 
 	if not is_zero_approx(velocity.x):
 		if velocity.x > 0.0:
@@ -73,16 +94,5 @@ func get_new_animation() -> String:
 
 func try_jump() -> void:
 	if is_on_floor():
-		jump_sound.pitch_scale = 1.0
-	elif _double_jump_charged:
-		_double_jump_charged = false
-		velocity.x *= 2.5
-		jump_sound.pitch_scale = 1.5
-	else:
-		return
-	velocity.y = JUMP_VELOCITY
-	jump_sound.play()
-
-
-func _on_dash_timer_timeout() -> void:
-	_dash_charged = false
+		velocity.y = JUMP_VELOCITY
+		jump_sound.play()
