@@ -4,166 +4,166 @@ using Chunk = float[,];
 
 public partial class WorldGenerator
 {
-    public class Layer
-    {
-        Layer(TileMapLayer tileMapLayer) => TileMapLayer = tileMapLayer;
+	public class Layer
+	{
+		Layer(TileMapLayer tileMapLayer) => TileMapLayer = tileMapLayer;
 
-        public TileMapLayer TileMapLayer { get; }
+		public TileMapLayer TileMapLayer { get; }
 
-        Chunk NextChunk;
-        Chunk CurrChunk;
-        Chunk PrevChunk;
-        int ChunkDepth;
+		Chunk NextChunk;
+		Chunk CurrChunk;
+		Chunk PrevChunk;
+		int ChunkDepth;
 
-        public static Layer Generate()
-        {
-            var tml = new TileMapLayer();
-            tml.CollisionEnabled = true;
-            tml.TileSet = LayerTemplate.TileSet;
-            var layer = new Layer(tml);
+		public static Layer Generate()
+		{
+			var tml = new TileMapLayer();
+			tml.CollisionEnabled = true;
+			tml.TileSet = LayerTemplate.TileSet;
+			var layer = new Layer(tml);
 
-            for (int i = 0; i < MoleStartCount.Value; i++)
-            {
-                var mole = new Mole();
+			for (int i = 0; i < MoleStartCount.Value; i++)
+			{
+				var mole = new Mole();
 
-                // First mole should always start in centre.
-                if (i == 0)
-                    mole.X = ChunkHalfWidth - 1;
+				// First mole should always start in centre.
+				if (i == 0)
+					mole.X = ChunkHalfWidth - 1;
 
-                Moles.Add(mole);
-            }
+				Moles.Add(mole);
+			}
 
-            for (int i = 0; i < ChunksPerLayer; i++)
-                layer.GenerateChunk();
+			for (int i = 0; i < ChunksPerLayer; i++)
+				layer.GenerateChunk();
 
-            return layer;
-        }
+			return layer;
+		}
 
-        void GenerateChunk()
-        {
-            // Muncher needs to know some pre-munched state of previous AND next chunk to be seamless (fuck). So,
-            // 1. Copy CurrChunk to PrevChunk
-            //    1a. If CurrChunk is null, create surface chunk of air
-            // 2. Copy NextChunk to CurrChunk
-            //    2a. If NextChunk is null, create new CurrChunk, MoleAndMangle it
-            // 3. Create new NextChunk, MoleAndMangle it
-            // 4. Create bigChunk with ChunkExtraHeight bits from PrevChunk and NextChunk surrounding CurrChunk
-            // 5. Munch bigChunk
-            // 6. Write bigChunk to tiles
-            // Performance seems fine; main cost is still running muncher items.
-            if (CurrChunk == null)
-            {
-                PrevChunk = NewChunk();
-                for (int x = 0; x < ChunkWidth; x++)
-                for (int y = 0; y < ChunkHeight; y++)
-                    PrevChunk[x, y] = 1.0f;
-            }
-            else
-            {
-                MoleAndMangle(CurrChunk);
-                PrevChunk = CloneChunk(CurrChunk);
-            }
+		void GenerateChunk()
+		{
+			// Muncher needs to know some pre-munched state of previous AND next chunk to be seamless (fuck). So,
+			// 1. Copy CurrChunk to PrevChunk
+			//    1a. If CurrChunk is null, create surface chunk of air
+			// 2. Copy NextChunk to CurrChunk
+			//    2a. If NextChunk is null, create new CurrChunk, MoleAndMangle it
+			// 3. Create new NextChunk, MoleAndMangle it
+			// 4. Create bigChunk with ChunkExtraHeight bits from PrevChunk and NextChunk surrounding CurrChunk
+			// 5. Munch bigChunk
+			// 6. Write bigChunk to tiles
+			// Performance seems fine; main cost is still running muncher items.
+			if (CurrChunk == null)
+			{
+				PrevChunk = NewChunk();
+				for (int x = 0; x < ChunkWidth; x++)
+				for (int y = 0; y < ChunkHeight; y++)
+					PrevChunk[x, y] = 1.0f;
+			}
+			else
+			{
+				MoleAndMangle(CurrChunk);
+				PrevChunk = CloneChunk(CurrChunk);
+			}
 
-            if (NextChunk == null)
-            {
-                CurrChunk = NewChunk();
-                MoleAndMangle(CurrChunk);
-                ChunkDepth++;
-            }
-            else
-            {
-                CurrChunk = CloneChunk(NextChunk);
-            }
+			if (NextChunk == null)
+			{
+				CurrChunk = NewChunk();
+				MoleAndMangle(CurrChunk);
+				ChunkDepth++;
+			}
+			else
+			{
+				CurrChunk = CloneChunk(NextChunk);
+			}
 
-            NextChunk = NewChunk();
-            foreach (Mole mole in Moles)
-                mole.Y = 0;
-            MoleAndMangle(NextChunk);
+			NextChunk = NewChunk();
+			foreach (Mole mole in Moles)
+				mole.Y = 0;
+			MoleAndMangle(NextChunk);
 
-            Chunk bigChunk = new float[ChunkWidth, ChunkBigHeight];
+			Chunk bigChunk = new float[ChunkWidth, ChunkBigHeight];
 
-            // We need a copy of the active chunk anyway, seems *much* faster when we work
-            // with contiguous arrays when doing neighbour checks.
-            for (int x = 0; x < ChunkWidth; x++)
-            {
-                for (int y = 0; y < ChunkExtraHeight; y++)
-                    bigChunk[x, y] = PrevChunk[x, ChunkExtraDiff + y];
+			// We need a copy of the active chunk anyway, seems *much* faster when we work
+			// with contiguous arrays when doing neighbour checks.
+			for (int x = 0; x < ChunkWidth; x++)
+			{
+				for (int y = 0; y < ChunkExtraHeight; y++)
+					bigChunk[x, y] = PrevChunk[x, ChunkExtraDiff + y];
 
-                for (int y = 0; y < ChunkHeight; y++)
-                    bigChunk[x, y + ChunkExtraHeight] = CurrChunk[x, y];
+				for (int y = 0; y < ChunkHeight; y++)
+					bigChunk[x, y + ChunkExtraHeight] = CurrChunk[x, y];
 
-                for (int y = 0; y < ChunkExtraHeight; y++)
-                    bigChunk[x, y + ChunkExtraHeight + ChunkHeight] = NextChunk[x, y];
-            }
+				for (int y = 0; y < ChunkExtraHeight; y++)
+					bigChunk[x, y + ChunkExtraHeight + ChunkHeight] = NextChunk[x, y];
+			}
 
-            var muncher = new Muncher();
-            muncher.EatChunk(bigChunk);
+			var muncher = new Muncher();
+			muncher.EatChunk(bigChunk);
 
-            WriteTileMap(bigChunk, ChunkDepth - 1);
+			WriteTileMap(bigChunk, ChunkDepth - 1);
 
-            ChunkDepth++;
-        }
+			ChunkDepth++;
+		}
 
-        void MoleAndMangle(Chunk chunk)
-        {
-            // Moles are allowed to kill each other / go through mitosis (??) so `moles` list will be modified.
-            // So obviously make a copy of list as we iter, and who knows what we'll end up with by the end.
-            foreach (Mole mole in Moles.ToList())
-                mole.DigChunk(chunk, Moles);
+		void MoleAndMangle(Chunk chunk)
+		{
+			// Moles are allowed to kill each other / go through mitosis (??) so `moles` list will be modified.
+			// So obviously make a copy of list as we iter, and who knows what we'll end up with by the end.
+			foreach (Mole mole in Moles.ToList())
+				mole.DigChunk(chunk, Moles);
 
-            Mangler mangler = new();
-            mangler.MangleChunk(chunk, ChunkDepth);
+			Mangler mangler = new();
+			mangler.MangleChunk(chunk, ChunkDepth);
 
-            // Ensure sides are rock
-            AddSideMargin(chunk);
-        }
+			// Ensure sides are rock
+			AddSideMargin(chunk);
+		}
 
-        void AddSideMargin(Chunk chunk)
-        {
-            for (int x = 0; x < SideMargin.Value; x++)
-            for (int y = 0; y < ChunkHeight; y++)
-            {
-                int d = ChunkWidth - x - 1;
-                chunk[x, y] = chunk[x, y] * x * SideMarginFadeFactor.Value * Random.Randf();
-                chunk[d, y] = chunk[d, y] * (SideMargin.Value - x) * SideMarginFadeFactor.Value * Random.Randf();
-            }
-        }
+		void AddSideMargin(Chunk chunk)
+		{
+			for (int x = 0; x < SideMargin.Value; x++)
+			for (int y = 0; y < ChunkHeight; y++)
+			{
+				int d = ChunkWidth - x - 1;
+				chunk[x, y] = chunk[x, y] * x * SideMarginFadeFactor.Value * Random.Randf();
+				chunk[d, y] = chunk[d, y] * (SideMargin.Value - x) * SideMarginFadeFactor.Value * Random.Randf();
+			}
+		}
 
-        static readonly Vector2I tmp = new Vector2I(0, 0);
-        static readonly Vector2I tmp2 = new Vector2I(22, 2);
+		static readonly Vector2I tmp = new Vector2I(0, 0);
+		static readonly Vector2I tmp2 = new Vector2I(22, 2);
 
-        void WriteTileMap(Chunk bigChunk, int chunkDepth)
-        {
-            for (int x = 0; x < ChunkWidth; x++)
-            for (int y = ChunkExtraHeight; y < ChunkHeight + ChunkExtraHeight; y++)
-            {
-                float strength = bigChunk[x, y];
-                // ADDING a block, so if strength is BELOW the threshold for air
-                if (strength < AirThreshold.Value)
-                {
-                    TileMapLayer.SetCell(
-                        new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + y),
-                        0,
-                        y % ChunkHeight == 0 ? tmp2 : tmp
-                    );
-                }
-            }
-        }
-    }
+		void WriteTileMap(Chunk bigChunk, int chunkDepth)
+		{
+			for (int x = 0; x < ChunkWidth; x++)
+			for (int y = ChunkExtraHeight; y < ChunkHeight + ChunkExtraHeight; y++)
+			{
+				float strength = bigChunk[x, y];
+				// ADDING a block, so if strength is BELOW the threshold for air
+				if (strength < AirThreshold.Value)
+				{
+					TileMapLayer.SetCell(
+						new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
+						0,
+						y % ChunkHeight == 0 ? tmp2 : tmp
+					);
+				}
+			}
+		}
+	}
 
-    static Chunk NewChunk()
-    {
-        return new float[ChunkWidth, ChunkHeight];
-    }
+	static Chunk NewChunk()
+	{
+		return new float[ChunkWidth, ChunkHeight];
+	}
 
-    static Chunk CloneChunk(Chunk chunk)
-    {
-        Chunk cloned = NewChunk();
+	static Chunk CloneChunk(Chunk chunk)
+	{
+		Chunk cloned = NewChunk();
 
-        for (int x = 0; x < ChunkWidth; x++)
-        for (int y = 0; y < ChunkHeight; y++)
-            cloned[x, y] = chunk[x, y];
+		for (int x = 0; x < ChunkWidth; x++)
+		for (int y = 0; y < ChunkHeight; y++)
+			cloned[x, y] = chunk[x, y];
 
-        return cloned;
-    }
+		return cloned;
+	}
 }
