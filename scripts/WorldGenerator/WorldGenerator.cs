@@ -27,7 +27,6 @@ public partial class WorldGenerator : Node2D
     const int InitialLayers = 4;
     const int ChunksPerLayer = 8;
     const int LayerHeight = ChunkHeight * ChunksPerLayer;
-    const int DistanceFromTopToDelete = 256;
     const int LayersFromBottomToTriggerGeneration = 4;
     const int TileSize = 16;
     const int MaxMoles = 8;
@@ -83,20 +82,7 @@ public partial class WorldGenerator : Node2D
             BottomLayer++;
         }
 
-        // Clean up old layers well above us - gameplay will make it impossible to ever go so far back up
-        if (CleanupTracker++ == 100)
-        {
-            CleanupTracker = 0;
-            for (int i = 0; i < LayerContainer.GetChildCount(); i++)
-            {
-                TileMapLayer layer = (TileMapLayer)LayerContainer.GetChild(i);
-                if (layer.GetUsedRect().End.Y * 16 < yPos - DistanceFromTopToDelete)
-                {
-                    LayerContainer.RemoveChild(layer);
-                    layer.QueueFree();
-                }
-            }
-        }
+        // TODO: Old layer cleanup, previous stuff was buggy.
 
         base._Process(delta);
     }
