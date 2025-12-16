@@ -50,7 +50,7 @@ public partial class WorldGenerator
                     }
 
                     // Clear out space above us as well - I *think* unless muncher
-                    // happens to add stuff or we get weird margin issues, we should always
+                    // happens to add stuff, or we get weird margin issues, we should always
                     // get transferable gaps for our player size and hole size of 2.
                     if (Y > 0)
                     {
@@ -85,7 +85,7 @@ public partial class WorldGenerator
         // can avoid spawning loads of moles if we move sideways excessively.
         bool Tunnel()
         {
-            // Normal distibution for new direction, mu = 0 so 0 is most common
+            // Normal distribution for new direction, mu = 0 so 0 is most common
             // (https://homepage.divms.uiowa.edu/~mbognar/applets/normal.html)
             float newDir = MoleUseNormalDist.Value
                 ? Random.Randfn(0, MoleNormalSigma.Value)

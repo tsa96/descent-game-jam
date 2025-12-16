@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Godot;
 
 public partial class WorldGenerator
@@ -8,8 +9,7 @@ public partial class WorldGenerator
     static Button RegenButton;
 
     static DynamicIntVariable Seed;
-    static DynamicIntVariable StartingChunkCount;
-    static DynamicFloatVariable AirThresold;
+    static DynamicFloatVariable AirThreshold;
     static DynamicIntVariable SideMargin;
     static DynamicFloatVariable SideMarginFadeFactor;
     static DynamicIntVariable MoleStartCount;
@@ -33,20 +33,19 @@ public partial class WorldGenerator
 
         PerfLabel = GetNode<Label>("../Interface/Debug/GridContainer/PerfLabel");
         RegenButton = GetNode<Button>("../Interface/Debug/GridContainer/RegenButton");
-        RegenButton.Pressed += Generate;
+        RegenButton.Pressed += ResetWorld;
 
         // if Empty / 0 we generate a random seed
         Seed = new DynamicIntVariable("Seed", 0);
-        StartingChunkCount = new DynamicIntVariable("Starting Chunk Count", 64);
-        // Bit pointless as Mole works best when setting everything to very high strength
-        AirThresold = new DynamicFloatVariable("Air Threshold", 0.5f);
+        // A bit pointless as Mole works best when setting everything to very high strength
+        AirThreshold = new DynamicFloatVariable("Air Threshold", 0.5f);
         SideMargin = new DynamicIntVariable("Side Margin", 2);
-        // Attemping to smooth out the sections where we block off the sides a bit. This is multipled
-        // by current cell strength * distance from edge * randf. Quick high values look pretty good!
+        // Attempting to smooth out the sections where we block off the sides a bit. This is multiplied
+        // by current cell strength * distance from edge * rand. Quick high values look pretty good!
         SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.5f);
         MoleStartCount = new DynamicIntVariable("Mole Start Count", 2);
         MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.075f);
-        // Logic for this needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
+        // Logic for these needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
         // Always merging seems to work really well though.
         MoleMergeChance = new DynamicFloatVariable("Mole Merge Chance", 1.0f);
         // If lower than 3 we can get sections that are very awkward to fit through.
@@ -74,6 +73,27 @@ public partial class WorldGenerator
         // Generally, keep air slightly lower (e.g. 1) than rock.
         MuncherAirNeighbours = new DynamicIntVariable("Muncher Air Neighbours Min", 4);
         MuncherRockNeighbours = new DynamicIntVariable("Muncher Rock Neighbours Min", 5);
+    }
+
+    void SeedNoise()
+    {
+        // Use random seed if set to 0 in dbg ui
+        int newSeed = Seed.Value;
+        if (newSeed == 0)
+            newSeed = (int)GD.Randi();
+
+        Random.Seed = (ulong)newSeed;
+        ManglerNoise.Seed = newSeed;
+
+        // See https://auburn.github.io/FastNoiseLite/ to preview. Fractals probs not helpful!
+        ManglerNoise.NoiseType = Enum.TryParse<FastNoiseLite.NoiseTypeEnum>(
+            ManglerNoiseType.Value.ToString(),
+            out var type
+        )
+            ? type
+            : FastNoiseLite.NoiseTypeEnum.Perlin;
+
+        ManglerNoise.Frequency = ManglerFrequency.Value;
     }
 
     class DynamicIntVariable

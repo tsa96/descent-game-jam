@@ -5,6 +5,9 @@ public partial class WorldGenerator
     // Based on https://www.cs.cmu.edu/~112-s23/notes/student-tp-guides/Terrain.pdf Example 7
     class Muncher
     {
+        static readonly sbyte[] OffsetX = [-1, 0, 1, -1, 1, -1, 0, 1];
+        static readonly sbyte[] OffsetY = [-1, -1, -1, 0, 0, 1, 1, 1];
+
         // No reason for this not to be static or even for this class to exist. But it's funny.
         public void EatChunk(Chunk chunk)
         {
@@ -23,7 +26,7 @@ public partial class WorldGenerator
                         if (
                             nx is >= 0 and < ChunkWidth
                             && ny is >= 0 and < ChunkBigHeight
-                            && chunk[nx, ny] >= AirThresold.Value
+                            && chunk[nx, ny] >= AirThreshold.Value
                         )
                         {
                             openNeighbours++;
@@ -31,7 +34,7 @@ public partial class WorldGenerator
                     }
 
                     float current = chunk[x, y];
-                    if (current >= AirThresold.Value)
+                    if (current >= AirThreshold.Value)
                     {
                         buffer[x, y] = openNeighbours >= MuncherAirNeighbours.Value ? 1.0f : 0.0f;
                     }

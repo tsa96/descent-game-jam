@@ -2,6 +2,7 @@ class_name Game
 extends Node
 
 @onready var world := $World
+@onready var player := $World/Player as CharacterBody2D
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
 
 func _unhandled_input(input_event: InputEvent) -> void:
@@ -23,4 +24,5 @@ func _unhandled_input(input_event: InputEvent) -> void:
 		get_tree().root.set_input_as_handled()
 
 	elif input_event.is_action_pressed(&"reset"):
-		$World.Generate()
+		$World.ResetWorld()
+		player.position.y = 0
