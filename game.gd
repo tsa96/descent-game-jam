@@ -5,6 +5,11 @@ extends Node
 @onready var player := $World/Player as CharacterBody2D
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
 
+# Completely reset game state. Bye!
+func reset() -> void:
+	$World.ResetWorld()
+	player.position = Vector2(0, 0)
+
 func _unhandled_input(input_event: InputEvent) -> void:
 	if input_event.is_action_pressed(&"toggle_fullscreen"):
 		var mode := DisplayServer.window_get_mode()
@@ -24,5 +29,5 @@ func _unhandled_input(input_event: InputEvent) -> void:
 		get_tree().root.set_input_as_handled()
 
 	elif input_event.is_action_pressed(&"reset"):
-		$World.ResetWorld()
-		player.position.y = 0
+		reset()
+		get_tree().root.set_input_as_handled()

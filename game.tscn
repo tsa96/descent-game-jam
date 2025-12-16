@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=19 format=4 uid="uid://d2usby77vaxdw"]
 
 [ext_resource type="Script" uid="uid://cmfap8ewr61k2" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://dsqy8lxrpip13" path="res://player/player.tscn" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://budit7ttswd8s" path="res://assets/tileset.png" id="3_feb5d"]
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
+[ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
+[ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="7_eow3j"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 resource_name = "Pog"
@@ -1550,6 +1552,27 @@ texture = ExtResource("3_feb5d")
 physics_layer_0/collision_layer = 2
 sources/0 = SubResource("TileSetAtlasSource_fc0e3")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7jktm"]
+size = Vector2(384, 384)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ryrav"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j5wjh"]
+shader = ExtResource("6_ryrav")
+shader_parameter/brightness = 0.8
+shader_parameter/contrast = 1.5
+shader_parameter/saturation = 1.2
+
+[sub_resource type="Theme" id="Theme_j5wjh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vef74"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_eow3j"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_j5wjh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hve3p"]
+
 [sub_resource type="GDScript" id="GDScript_7jktm"]
 resource_name = "FPS Counter"
 script/source = "extends Label
@@ -1565,9 +1588,11 @@ func _process(_delta: float) -> void:
 "
 
 [node name="Game" type="Node"]
+process_mode = 3
 script = ExtResource("1_7jktm")
 
 [node name="World" type="Node2D" parent="."]
+process_mode = 1
 script = ExtResource("1_fc0e3")
 
 [node name="TileMapContainer" type="Node2D" parent="World"]
@@ -1578,77 +1603,147 @@ script = ExtResource("1_fc0e3")
 tile_map_data = PackedByteArray("AADZ/+z/AAAAAAAAAADZ/+3/AAAAAAAAAADZ/+7/AAAAAAAAAADZ/+//AAAAAAAAAADZ//D/AAAAAAAAAADa/+7/AAAAAAAAAADb/+7/AAAAAAAAAADb/+z/AAAAAAAAAADb/+3/AAAAAAAAAADb/+//AAAAAAAAAADb//D/AAAAAAAAAADd/+z/AAAAAAAAAADe/+z/AAAAAAAAAADf/+z/AAAAAAAAAADd/+3/AAAAAAAAAADd/+7/AAAAAAAAAADd/+//AAAAAAAAAADd//D/AAAAAAAAAADe//D/AAAAAAAAAADf//D/AAAAAAAAAADe/+7/AAAAAAAAAADf/+7/AAAAAAAAAADh/+z/AAAAAAAAAADh/+3/AAAAAAAAAADh/+7/AAAAAAAAAADh/+//AAAAAAAAAADh//D/AAAAAAAAAADi//D/AAAAAAAAAADk/+z/AAAAAAAAAADk/+3/AAAAAAAAAADk/+7/AAAAAAAAAADk/+//AAAAAAAAAADk//D/AAAAAAAAAADl//D/AAAAAAAAAADn/+z/AAAAAAAAAADn/+3/AAAAAAAAAADn/+7/AAAAAAAAAADn/+//AAAAAAAAAADn//D/AAAAAAAAAADo//D/AAAAAAAAAADp//D/AAAAAAAAAADp/+//AAAAAAAAAADp/+7/AAAAAAAAAADp/+3/AAAAAAAAAADp/+z/AAAAAAAAAADo/+z/AAAAAAAAAADz//T/AAAAAAAAAAD0//P/AAAAAAAAAADo/+f/AAAAAAAAAADg/+n/AAAAAAAAAAA=")
 tile_set = SubResource("TileSet_7jktm")
 
+[node name="Area2D" type="Area2D" parent="World"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Area2D"]
+position = Vector2(-448, 192)
+shape = SubResource("RectangleShape2D_7jktm")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Area2D"]
+position = Vector2(-448, 224)
+scale = Vector2(383.99997, 320)
+texture = SubResource("PlaceholderTexture2D_ryrav")
+
 [node name="Interface" type="CanvasLayer" parent="."]
 
 [node name="PauseMenu" type="Control" parent="Interface"]
+process_mode = 3
 layout_mode = 3
-anchors_preset = 0
-offset_left = 640.0
-offset_top = 333.0
-offset_right = 680.0
-offset_bottom = 373.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 script = ExtResource("5_7jktm")
-metadata/_edit_use_anchors_ = true
 
-[node name="ColorRect" type="ColorRect" parent="Interface/PauseMenu"]
-layout_mode = 1
-offset_left = -640.0
-offset_top = -333.0
-offset_right = 640.0
-offset_bottom = 389.0
-color = Color(0, 0, 0, 0.19607843)
-
-[node name="PausedLabel" type="Label" parent="Interface/PauseMenu/ColorRect"]
+[node name="BackgroundShader" type="ColorRect" parent="Interface/PauseMenu"]
+material = SubResource("ShaderMaterial_j5wjh")
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -203.22192
-offset_top = -206.0
-offset_right = 203.22192
-offset_bottom = 20.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 80
-text = "paws"
-horizontal_alignment = 1
-vertical_alignment = 1
+color = Color(0, 0, 0, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Interface/PauseMenu/ColorRect"]
+[node name="ColorRect" type="ColorRect" parent="Interface/PauseMenu/BackgroundShader"]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.70000005
-anchor_right = 0.5
-anchor_bottom = 0.70000005
-offset_left = -162.0
-offset_top = -127.00006
-offset_right = 165.0
-offset_bottom = 125.99994
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ResumeButton" type="Button" parent="Interface/PauseMenu/ColorRect/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Resume"
-
-[node name="Quit" type="Button" parent="Interface/PauseMenu/ColorRect/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Quit"
-
-[node name="Debug" type="Control" parent="Interface"]
-layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+color = Color(0, 0, 0, 0.5019608)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Interface/PauseMenu/BackgroundShader/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.5
+offset_top = -144.0
+offset_right = 160.5
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="PausedLabel" type="Label" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_colors/font_outline_color = Color(0.6857328, 3.1044335e-06, 5.7756904e-07, 1)
+theme_override_constants/outline_size = 12
+theme_override_constants/shadow_outline_size = 4
+theme_override_fonts/font = ExtResource("7_eow3j")
+theme_override_font_sizes/font_size = 128
+text = "Paused"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_j5wjh")
+theme_override_colors/font_color = Color(0.9999991, 0.8988213, 0.8925482, 1)
+theme_override_colors/font_focus_color = Color(0.99999887, 0.57228845, 0.5626233, 1)
+theme_override_colors/font_hover_color = Color(0.99999183, 0.61589384, 0.6022827, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.99992496, 0.19319502, 0.28311372, 1)
+theme_override_fonts/font = ExtResource("7_eow3j")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
+text = "Resume"
+
+[node name="ResetButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_j5wjh")
+theme_override_colors/font_color = Color(0.9999991, 0.8988213, 0.8925482, 1)
+theme_override_colors/font_focus_color = Color(0.99999887, 0.57228845, 0.5626233, 1)
+theme_override_colors/font_hover_color = Color(0.99999183, 0.61589384, 0.6022827, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.99992496, 0.19319502, 0.28311372, 1)
+theme_override_fonts/font = ExtResource("7_eow3j")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
+text = "Reset
+"
+
+[node name="QuitButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_j5wjh")
+theme_override_colors/font_color = Color(0.9999991, 0.8988213, 0.8925482, 1)
+theme_override_colors/font_focus_color = Color(0.99999887, 0.57228845, 0.5626233, 1)
+theme_override_colors/font_hover_color = Color(0.99999183, 0.61589384, 0.6022827, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.99992496, 0.19319502, 0.28311372, 1)
+theme_override_fonts/font = ExtResource("7_eow3j")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
+text = "Quit"
+
+[node name="Debug" type="Control" parent="Interface"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = -960.0
+offset_bottom = -540.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 
 [node name="GridContainer" type="GridContainer" parent="Interface/Debug"]
 layout_mode = 1
@@ -1672,3 +1767,12 @@ layout_mode = 1
 offset_right = 97.0
 offset_bottom = 23.0
 script = SubResource("GDScript_7jktm")
+
+[node name="InterfaceAudioPlayer" type="AudioStreamPlayer2D" parent="Interface"]
+process_mode = 3
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="Interface"]
+
+[connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/ResumeButton" to="Interface/PauseMenu" method="_on_resume_button_pressed"]
+[connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/ResetButton" to="." method="reset"]
+[connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/QuitButton" to="Interface/PauseMenu" method="_on_quit_button_pressed"]
