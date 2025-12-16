@@ -1,9 +1,43 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Chunk = float[,];
 
 public partial class WorldGenerator
 {
+	enum Direction
+	{
+		Top,
+		TopRight,
+		Right,
+		BottomRight,
+		Bottom,
+		BottomLeft,
+		Left,
+		TopLeft
+	}
+
+	static readonly Vector2I[] DirectionVectors =
+	[
+		new(0, -1),
+		new(1, -1),
+		new(1, 0),
+		new(1, 1),
+		new(0, 1),
+		new(-1, 1),
+		new(-1, 0),
+		new(-1, -1),
+	];
+
+	static bool HasOpenNeighbour(Chunk chunk, int x, int y, Direction direction)
+	{
+		Vector2I dir = DirectionVectors[(int)direction];
+		int nx = x + dir.X;
+		int ny = y + dir.Y;
+
+		return nx is >= 0 and < ChunkWidth && ny is >= 0 and < ChunkBigHeight && chunk[nx, ny] >= AirThreshold.Value;
+	}
+
 	public class Layer
 	{
 		Layer(TileMapLayer tileMapLayer) => TileMapLayer = tileMapLayer;
@@ -17,9 +51,13 @@ public partial class WorldGenerator
 
 		public static Layer Generate()
 		{
-			var tml = new TileMapLayer();
-			tml.CollisionEnabled = true;
-			tml.TileSet = LayerTemplate.TileSet;
+			var tml = new TileMapLayer()
+			{
+				CollisionEnabled = true,
+				TileSet = LayerTileSet,
+				Scale = LayerScale
+			};
+
 			var layer = new Layer(tml);
 
 			for (int i = 0; i < MoleStartCount.Value; i++)
@@ -129,8 +167,61 @@ public partial class WorldGenerator
 			}
 		}
 
-		static readonly Vector2I tmp = new Vector2I(0, 0);
-		static readonly Vector2I tmp2 = new Vector2I(22, 2);
+		Vector2I GetAtlasCoords(Chunk c, int x, int y)
+		{
+			bool T = HasOpenNeighbour(c, x, y, Direction.Top);
+			bool B = HasOpenNeighbour(c, x, y, Direction.Bottom);
+			bool L = HasOpenNeighbour(c, x, y, Direction.Left);
+			bool R = HasOpenNeighbour(c, x, y, Direction.Right);
+			bool TL = HasOpenNeighbour(c, x, y, Direction.TopLeft);
+			bool TR = HasOpenNeighbour(c, x, y, Direction.TopRight);
+			bool BL = HasOpenNeighbour(c, x, y, Direction.BottomLeft);
+			bool BR = HasOpenNeighbour(c, x, y, Direction.BottomRight);
+
+			// Cases directly touching air
+			if (T && L && R && B)
+				return new(3, 1);
+			if (T && R && B)
+				return new(5, 2);
+			if (T && L && B)
+				return new(3, 2);
+			if (T && L && R)
+				return new(3, 3);
+			if (L && R && B)
+				return new(3, 5);
+			if (T && L)
+				return new(0, 0);
+			if (T && B)
+				return new(4, 2);
+			if (T && R)
+				return new(2, 0);
+			if (L && B)
+				return new(0, 2);
+			if (B && R)
+				return new(2, 2);
+			if (L && R)
+				return new(3, 4);
+			if (T)
+				return new(1, 0);
+			if (L)
+				return new(0, 1);
+			if (B)
+				return new(1, 2);
+			if (R)
+				return new(2, 1);
+
+			// Diagonal to air
+			if (TL)
+				return new(2, 5);
+			if (TR)
+				return new(0, 5);
+			if (BR) // fortnite
+				return new(0, 3);
+			if (BL)
+				return new(2, 3);
+
+			return new(1, 1);
+		}
 
 		void WriteTileMap(Chunk bigChunk, int chunkDepth)
 		{
@@ -138,13 +229,13 @@ public partial class WorldGenerator
 			for (int y = ChunkExtraHeight; y < ChunkHeight + ChunkExtraHeight; y++)
 			{
 				float strength = bigChunk[x, y];
-				// ADDING a block, so if strength is BELOW the threshold for air
-				if (strength < AirThreshold.Value)
+				if (strength >= AirThreshold.Value)
+					continue;
 				{
 					TileMapLayer.SetCell(
 						new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
 						0,
-						y % ChunkHeight == 0 ? tmp2 : tmp
+						GetAtlasCoords(bigChunk, x, y)
 					);
 				}
 			}
