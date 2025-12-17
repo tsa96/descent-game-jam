@@ -51,11 +51,11 @@ public partial class WorldGenerator
 
 		public static Layer Generate()
 		{
-			var tml = new TileMapLayer()
+			var tml = new TileMapLayer
 			{
 				CollisionEnabled = true,
 				TileSet = LayerTileSet,
-				Scale = LayerScale
+				Scale = LayerScale,
 			};
 
 			var layer = new Layer(tml);
