@@ -232,7 +232,7 @@ bank_paths = ["res://assets/audio/Desktop/Character.bank", "res://assets/audio/D
 event_name = "event:/Footsteps"
 event_guid = "{40c00093-bae1-4dfb-8182-fe20da38357d}"
 fmod_parameters/Bitcrushed/id = -4088003812932965492
-fmod_parameters/Bitcrushed = 1.0
+fmod_parameters/Bitcrushed = 0.0
 fmod_parameters/Bitcrushed/variant_type = 3
 
 [node name="AudioEventListener" type="FmodListener2D" parent="Audio"]
@@ -242,5 +242,5 @@ event_name = "event:/LandHighVelocity"
 event_guid = "{a033f64d-16da-44f2-90c6-0b30d36a8cb2}"
 volume = 0.5
 fmod_parameters/Bitcrushed/id = -4088003812932965492
-fmod_parameters/Bitcrushed = 1.0
+fmod_parameters/Bitcrushed = 0.0
 fmod_parameters/Bitcrushed/variant_type = 3
