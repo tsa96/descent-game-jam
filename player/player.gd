@@ -4,6 +4,8 @@ extends CharacterBody2D
 const SANITY_MAX = 100.0
 var sanity: float
 
+const START_POS =  Vector2(-30 * 8, 32);
+
 const WALK_SPEED = 240.0
 const WALK_ACCEL = WALK_SPEED * 6.0
 const DASH_SPEED = 700.0
@@ -25,8 +27,8 @@ func _ready() -> void:
 
 func reset() -> void:
 	sanity = SANITY_MAX
+	position = START_POS
 	velocity = Vector2(0, 0)
-	position = Vector2(16, 0)
 	dash_charged = false
 	jump_sound.stop()
 
