@@ -15,6 +15,10 @@ run/main_scene="uid://d2usby77vaxdw"
 config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+FmodManager="*res://addons/fmod/FmodManager.gd"
+
 [display]
 
 window/size/viewport_width=1920
@@ -24,6 +28,10 @@ window/stretch/scale_mode="integer"
 [dotnet]
 
 project/assembly_name="cave-game"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/fmod/plugin.cfg")
 
 [input]
 
