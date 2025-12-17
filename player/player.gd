@@ -4,7 +4,7 @@ extends CharacterBody2D
 const SANITY_MAX = 100.0
 var sanity: float
 
-const START_POS =  Vector2(-30 * 8, 32);
+const START_POS =  Vector2(-30 * 8, -32);
 
 const WALK_SPEED = 240.0
 const WALK_ACCEL = WALK_SPEED * 6.0
