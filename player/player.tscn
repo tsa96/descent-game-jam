@@ -220,4 +220,10 @@ shape = SubResource("11")
 stream = ExtResource("5")
 volume_db = -3.0
 
+[node name="WallClimbRayLeft" type="RayCast2D" parent="."]
+target_position = Vector2(-64, 0)
+collide_with_areas = true
 
+[node name="WallClimbRayRight" type="RayCast2D" parent="."]
+target_position = Vector2(64, 0)
+collide_with_areas = true
