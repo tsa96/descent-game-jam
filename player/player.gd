@@ -14,7 +14,6 @@ const FAST_FALL_RECOVER_MULT = 1.5
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 var dash_charged: bool
 
-@onready var platform_detector := $PlatformDetector as RayCast2D
 @onready var animation_player := $AnimationPlayer as AnimationPlayer
 @onready var sprite := $Sprite2D as Sprite2D
 @onready var jump_sound := $Jump as AudioStreamPlayer2D
@@ -69,7 +68,6 @@ func _physics_process(delta: float) -> void:
 		else:
 			sprite.scale.x = -1.0
 
-	floor_stop_on_slope = not platform_detector.is_colliding()
 	move_and_slide()
 
 	var animation := get_new_animation()

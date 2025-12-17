@@ -190,13 +190,6 @@ floor_constant_speed = true
 platform_on_leave = 2
 script = ExtResource("3")
 
-[node name="ShootAnimation" type="Timer" parent="."]
-wait_time = 0.2
-one_shot = true
-
-[node name="PlatformDetector" type="RayCast2D" parent="."]
-target_position = Vector2(0, 6)
-
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, 7.1525574e-07)
 scale = Vector2(1, 0.625)
@@ -227,31 +220,4 @@ shape = SubResource("11")
 stream = ExtResource("5")
 volume_db = -3.0
 
-[node name="UI" type="CanvasLayer" parent="."]
-layer = 0
 
-[node name="Left" type="TouchScreenButton" parent="UI"]
-position = Vector2(157, 813)
-scale = Vector2(2, 2)
-passby_press = true
-action = "move_left"
-visibility_mode = 1
-
-[node name="Right" type="TouchScreenButton" parent="UI"]
-position = Vector2(425, 813)
-scale = Vector2(2, 2)
-passby_press = true
-action = "move_right"
-visibility_mode = 1
-
-[node name="Jump" type="TouchScreenButton" parent="UI"]
-position = Vector2(1871, 813)
-scale = Vector2(2, 2)
-action = "jump"
-visibility_mode = 1
-
-[node name="Fire" type="TouchScreenButton" parent="UI"]
-position = Vector2(1870, 564)
-scale = Vector2(2, 2)
-action = "shoot"
-visibility_mode = 1
