@@ -8,6 +8,10 @@
 
 config_version=5
 
+[Fmod]
+
+General/banks_path="res://assets/audio/Desktop"
+
 [application]
 
 config/name="cave-game"

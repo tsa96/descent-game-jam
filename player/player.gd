@@ -18,17 +18,22 @@ const WALL_CLIMB_SLOWDOWN = 30
 const WALL_JUMP_VELOCITY = -350.0
 const WALL_JUMP_COOLDOWN = 1
 const WALL_JUMP_MAX_SPEED = 250
+const FOOTSTEP_AUDIO_TIMER_RESET = .3
+const HIGH_LANDING_VELOCITY = 400.0
 
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 var dash_charged: bool
 var last_walljump: float
+var footstep_audio_timer: float
 
 @onready var wall_jump_ray_left := $WallClimbRayLeft as RayCast2D
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
 @onready var animation_player := $AnimationPlayer as AnimationPlayer
 @onready var sprite := $Sprite2D as Sprite2D
-@onready var jump_sound := $Jump as AudioStreamPlayer2D
 @onready var camera := $Camera as Camera2D
+
+@onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
+@onready var land_high_vel_audio_emitter := $Audio/LandHighVelocityAudioEventEmitter as FmodEventEmitter2D
 
 
 func _ready() -> void:
@@ -41,8 +46,7 @@ func reset() -> void:
 	velocity = Vector2(0, 0)
 	dash_charged = false
 	last_walljump = 1000
-	jump_sound.stop()
-
+	footstep_audio_timer = 0
 
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
@@ -60,10 +64,10 @@ func _physics_process(delta: float) -> void:
 		print(velocity.y)
 		if is_on_floor():
 			velocity.y = JUMP_VELOCITY
-			jump_sound.play()
+			footstep_audio_emitter.play()
 		elif is_close_to_wall() and velocity.y < WALL_JUMP_MAX_SPEED and last_walljump > WALL_JUMP_COOLDOWN:
 			velocity.y = WALL_JUMP_VELOCITY
-			jump_sound.play()
+			footstep_audio_emitter.play()
 			last_walljump = 0
 	elif Input.is_action_just_released("jump") and velocity.y < 0.0:
 		# The player let go of jump early, reduce vertical momentum
@@ -94,7 +98,22 @@ func _physics_process(delta: float) -> void:
 		else:
 			sprite.scale.x = -1.0
 
+	var prev_fall_speed := abs(velocity.y) as float
+	var was_on_ground := is_on_floor() as bool
 	move_and_slide()
+	if velocity.y == 0.0 and prev_fall_speed >= HIGH_LANDING_VELOCITY:
+		land_high_vel_audio_emitter.play()
+	if was_on_ground and not is_on_floor():
+		footstep_audio_emitter.play()
+	
+	if is_on_floor() and velocity.x != 0.0:
+		if footstep_audio_timer <= 0.0:
+			footstep_audio_emitter.play()
+			footstep_audio_timer = FOOTSTEP_AUDIO_TIMER_RESET
+		else:
+			footstep_audio_timer -= delta
+	else:
+		footstep_audio_timer = 0
 
 	var animation := get_new_animation()
 	if animation != animation_player.current_animation:
