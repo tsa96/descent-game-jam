@@ -223,6 +223,9 @@ collide_with_areas = true
 target_position = Vector2(64, 0)
 collide_with_areas = true
 
+[node name="Regen" type="Timer" parent="."]
+wait_time = 0.5
+
 [node name="Audio" type="Node2D" parent="."]
 
 [node name="CharacterAudioBankLoader" type="FmodBankLoader" parent="Audio"]
@@ -244,3 +247,5 @@ volume = 0.5
 fmod_parameters/Bitcrushed/id = -4088003812932965492
 fmod_parameters/Bitcrushed = 0.0
 fmod_parameters/Bitcrushed/variant_type = 3
+
+[connection signal="timeout" from="Regen" to="." method="_on_regen_timeout"]

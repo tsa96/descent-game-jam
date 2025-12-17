@@ -25,6 +25,7 @@ var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 var dash_charged: bool
 var last_walljump: float
 var footstep_audio_timer: float
+var regen_on: float
 
 @onready var wall_jump_ray_left := $WallClimbRayLeft as RayCast2D
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
@@ -91,6 +92,9 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("dash") and dash_charged and direction != 0:
 		velocity.x = direction * DASH_SPEED
 		dash_charged = false
+		sanity -= 20
+		regen_on = false
+		$Regen.start()
 
 	if not is_zero_approx(velocity.x):
 		if velocity.x > 0.0:
@@ -118,6 +122,32 @@ func _physics_process(delta: float) -> void:
 	var animation := get_new_animation()
 	if animation != animation_player.current_animation:
 		animation_player.play(animation)
+		
+	if sanity > SANITY_MAX: 
+		sanity = SANITY_MAX
+	
+	# Sanity Regen
+	if sanity < SANITY_MAX and regen_on:
+		sanity += 0.1
+	
+	# If you are falling at terminal velocity, sanity will go down
+	if velocity.y == TERMINAL_VELOCITY:
+		sanity -= 0.5
+		regen_on = false
+		$Regen.start()
+	
+	# The same but if you're falling faster it'll go down faster
+	if velocity.y > TERMINAL_VELOCITY:
+		sanity -= velocity.y * 0.0005
+		regen_on = false
+		$Regen.start()
+	
+	#Death
+	if sanity <= 0:
+		reset()
+		
+	print(sanity)
+
 
 
 func get_new_animation() -> String:
@@ -139,4 +169,6 @@ func is_close_to_wall() -> bool:
 	# is_on_wall is too tight, extremely hard to do a walljump in the opposite direction
 	# before sideways movement makes the check fail - use raycasts instead (configure in 2D view!)
 	return wall_jump_ray_left.is_colliding() or wall_jump_ray_right.is_colliding()
-	
+
+func _on_regen_timeout() -> void:
+	regen_on = true
