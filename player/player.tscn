@@ -1,186 +1,145 @@
-[gd_scene load_steps=15 format=3 uid="uid://dsqy8lxrpip13"]
+[gd_scene load_steps=13 format=3 uid="uid://dsqy8lxrpip13"]
 
 [ext_resource type="Script" uid="uid://ddbwt6ntihs35" path="res://player/player.gd" id="3"]
-[ext_resource type="Texture2D" uid="uid://iv1n4s17uj55" path="res://player/robot.webp" id="9"]
+[ext_resource type="Texture2D" uid="uid://blrwea1erll" path="res://assets/player.png" id="3_g1dw6"]
 
-[sub_resource type="Animation" id="1"]
-resource_name = "crouch"
-length = 0.01
-step = 0.25
+[sub_resource type="Animation" id="Animation_rkbax"]
+resource_name = "idle"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [42]
+"values": [0]
 }
 
-[sub_resource type="Animation" id="2"]
-resource_name = "falling"
-length = 0.01
-step = 0.25
+[sub_resource type="Animation" id="Animation_g1dw6"]
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [48]
+"values": [0]
 }
 
-[sub_resource type="Animation" id="3"]
-resource_name = "falling_weapon"
-length = 0.5
-step = 0.25
+[sub_resource type="Animation" id="Animation_yw30f"]
+resource_name = "walk"
+length = 1.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.59999996, 0.79999995, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 4, 5, 6]
+}
+
+[sub_resource type="Animation" id="Animation_qjkh3"]
+resource_name = "fall"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [26]
+"values": [8]
 }
 
-[sub_resource type="Animation" id="4"]
-loop_mode = 1
-step = 0.25
+[sub_resource type="Animation" id="Animation_g6k8r"]
+resource_name = "jump"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.5, 0.75),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [30, 31, 32, 33]
-}
-
-[sub_resource type="Animation" id="5"]
-step = 0.25
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.5, 0.75),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [34, 35, 36, 37]
-}
-
-[sub_resource type="Animation" id="6"]
-length = 0.5
-step = 0.25
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [45]
+"values": [7]
 }
 
-[sub_resource type="Animation" id="7"]
-length = 0.5
-step = 0.25
+[sub_resource type="Animation" id="Animation_boad6"]
+resource_name = "fastfall"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [46]
+"values": [9]
 }
 
-[sub_resource type="Animation" id="8"]
-length = 0.6
-loop_mode = 1
+[sub_resource type="Animation" id="Animation_rgyib"]
+resource_name = "land"
+length = 0.201
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.06003, 0.12006, 0.18009, 0.24012, 0.30015, 0.36018, 0.42021, 0.48024, 0.54027),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+"values": [10, 0]
 }
 
-[sub_resource type="Animation" id="9"]
-length = 0.6
+[sub_resource type="Animation" id="Animation_hg6s5"]
+resource_name = "dash"
+length = 0.8
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48, 0.54),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+"values": [12, 13]
 }
 
-[sub_resource type="Animation" id="10"]
-length = 1.25
-loop_mode = 1
-step = 0.25
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.75, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [34, 35, 36, 37]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_jnr5f"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qjkh3"]
 _data = {
-&"crouch": SubResource("1"),
-&"falling": SubResource("2"),
-&"falling_weapon": SubResource("3"),
-&"idle": SubResource("4"),
-&"idle_weapon": SubResource("5"),
-&"jumping": SubResource("6"),
-&"jumping_weapon": SubResource("7"),
-&"run": SubResource("8"),
-&"run_weapon": SubResource("9"),
-&"standing_weapon_ready": SubResource("10")
+&"RESET": SubResource("Animation_g1dw6"),
+&"dash": SubResource("Animation_hg6s5"),
+&"fall": SubResource("Animation_qjkh3"),
+&"fastfall": SubResource("Animation_boad6"),
+&"idle": SubResource("Animation_rkbax"),
+&"jump": SubResource("Animation_g6k8r"),
+&"land": SubResource("Animation_rgyib"),
+&"walk": SubResource("Animation_yw30f")
 }
 
 [sub_resource type="RectangleShape2D" id="11"]
-size = Vector2(30.00002, 20.37502)
+size = Vector2(24, 32)
 
 [node name="Player" type="CharacterBody2D"]
 scale = Vector2(0.8, 0.8)
@@ -189,17 +148,14 @@ floor_constant_speed = true
 platform_on_leave = 2
 script = ExtResource("3")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, 7.1525574e-07)
-scale = Vector2(1, 0.625)
-texture = ExtResource("9")
-hframes = 8
-vframes = 8
-frame = 42
+[node name="PlayerSprite" type="Sprite2D" parent="."]
+position = Vector2(-2.5243547e-29, -7.499999)
+texture = ExtResource("3_g1dw6")
+hframes = 14
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="PlayerAnimator" type="AnimationPlayer" parent="."]
 libraries = {
-&"": SubResource("AnimationLibrary_jnr5f")
+&"": SubResource("AnimationLibrary_qjkh3")
 }
 
 [node name="Camera" type="Camera2D" parent="."]
@@ -211,8 +167,8 @@ limit_left = 0
 limit_right = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-1.42108505e-14, 10.187496)
-scale = Vector2(0.9999988, 0.9999988)
+position = Vector2(2.9802288e-07, 2.9802317e-07)
+scale = Vector2(0.9999983, 0.9999983)
 shape = SubResource("11")
 
 [node name="WallClimbRayLeft" type="RayCast2D" parent="."]

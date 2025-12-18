@@ -21,6 +21,14 @@ const WALL_JUMP_MAX_SPEED = 250
 const FOOTSTEP_AUDIO_TIMER_RESET = .3
 const HIGH_LANDING_VELOCITY = 400.0
 
+const IDLE_ANIM = "idle"
+const WALK_ANIM = "walk"
+const JUMPING_ANIM = "jump"
+const FALLING_ANIM = "fall"
+const FALLING_FAST_ANIM = "fastfall"
+const DASH_ANIM = "dash"
+const LANDING_ANIM = "land"
+
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 var dash_charged: bool
 var last_walljump: float
@@ -29,8 +37,8 @@ var regen_on: float
 
 @onready var wall_jump_ray_left := $WallClimbRayLeft as RayCast2D
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
-@onready var animation_player := $AnimationPlayer as AnimationPlayer
-@onready var sprite := $Sprite2D as Sprite2D
+@onready var player_animator := $PlayerAnimator as AnimationPlayer
+@onready var player_sprite := $PlayerSprite as Sprite2D
 @onready var camera := $Camera as Camera2D
 
 @onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
@@ -89,39 +97,24 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, direction * WALK_SPEED, WALK_ACCEL * delta)
 
 	# Dash
+	var just_dashed: bool = false
 	if Input.is_action_just_pressed("dash") and dash_charged and direction != 0:
 		velocity.x = direction * DASH_SPEED
 		dash_charged = false
 		sanity -= 20
 		regen_on = false
+		just_dashed = true
 		$Regen.start()
-
-	if not is_zero_approx(velocity.x):
-		if velocity.x > 0.0:
-			sprite.scale.x = 1.0
-		else:
-			sprite.scale.x = -1.0
 
 	var prev_fall_speed := abs(velocity.y) as float
 	var was_on_ground := is_on_floor() as bool
 	move_and_slide()
-	if velocity.y == 0.0 and prev_fall_speed >= HIGH_LANDING_VELOCITY:
-		land_high_vel_audio_emitter.play()
-	if was_on_ground and not is_on_floor():
-		footstep_audio_emitter.play()
 	
-	if is_on_floor() and velocity.x != 0.0:
-		if footstep_audio_timer <= 0.0:
-			footstep_audio_emitter.play()
-			footstep_audio_timer = FOOTSTEP_AUDIO_TIMER_RESET
-		else:
-			footstep_audio_timer -= delta
-	else:
-		footstep_audio_timer = 0
-
-	var animation := get_new_animation()
-	if animation != animation_player.current_animation:
-		animation_player.play(animation)
+	var just_landed := not was_on_ground and is_on_floor() as bool
+	var just_fell := was_on_ground and not is_on_floor() as bool
+	play_footstep_audio(delta, just_fell, just_landed, prev_fall_speed)
+	
+	play_animation(direction, just_dashed, just_landed)
 		
 	if sanity > SANITY_MAX: 
 		sanity = SANITY_MAX
@@ -149,21 +142,54 @@ func _physics_process(delta: float) -> void:
 	print(sanity)
 
 
-
-func get_new_animation() -> String:
-	var animation_new: String
-	if is_on_floor():
-		if absf(velocity.x) > 0.1:
-			animation_new = "run"
+func play_footstep_audio(delta: float, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+	if just_landed and prev_fall_speed >= HIGH_LANDING_VELOCITY:
+		land_high_vel_audio_emitter.play()
+	elif (is_on_floor() and velocity.x > 0.1) or just_fell or just_landed:
+		if footstep_audio_timer <= 0.0:
+			footstep_audio_emitter.play()
+			footstep_audio_timer = FOOTSTEP_AUDIO_TIMER_RESET
 		else:
-			animation_new = "idle"
+			footstep_audio_timer -= delta
+	else:
+		footstep_audio_timer = 0
+
+func play_animation(direction: float, just_dashed: bool, just_landed: bool) -> void:
+	if not is_zero_approx(direction):
+		if direction > 0.0:
+			player_sprite.scale.x = 1.0
+		else:
+			player_sprite.scale.x = -1.0
+	
+	var animation: String
+	
+	if just_dashed:
+		animation = DASH_ANIM
+	elif just_landed:
+		animation = LANDING_ANIM
+	elif is_on_floor():
+		if absf(velocity.x) > 0.1:
+			animation = WALK_ANIM
+		else:
+			animation = IDLE_ANIM
 	else:
 		if velocity.y > 0.0:
-			animation_new = "falling"
+			if velocity.y >= HIGH_LANDING_VELOCITY:
+				animation = FALLING_FAST_ANIM
+			else:
+				animation = FALLING_ANIM
 		else:
-			animation_new = "jumping"
-	return animation_new
+			animation = JUMPING_ANIM
 	
+	var cur_animation: String = player_animator.current_animation
+	if cur_animation == animation:
+		return
+	
+	if player_animator.is_playing() and (cur_animation == DASH_ANIM or cur_animation == LANDING_ANIM) and (animation != LANDING_ANIM and animation != JUMPING_ANIM):
+		# Let dash/land anim play fully before continuing with walk/fall. Prevents those from squashing these anims
+		return
+	
+	player_animator.play(animation)
 
 func is_close_to_wall() -> bool:
 	# is_on_wall is too tight, extremely hard to do a walljump in the opposite direction
