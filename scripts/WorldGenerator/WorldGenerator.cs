@@ -32,12 +32,20 @@ public partial class WorldGenerator : Node2D
 	const int MaxMoles = 8;
 
 	const float SanityItemSpawnChance = 0.02f;
-	const float SanityRestorePreference = 0.3f;
+	const float SanityRestorePreference = 0.7f;
 	static PackedScene SanityRestoringScene = GD.Load<PackedScene>(
 		"res://entities/sanity_restoring/sanity_restoring.tscn"
 	);
 	static PackedScene SanityDrainingScene = GD.Load<PackedScene>(
 		"res://entities/sanity_draining/sanity_draining.tscn"
+	);
+	
+	const float HallucinationSpawnChance = 0.0001f;
+	static PackedScene Hallucination1Scene = GD.Load<PackedScene>(
+		"res://entities/hallucinations/hallucination.tscn"
+	);
+	static PackedScene Hallucination2Scene = GD.Load<PackedScene>(
+		"res://entities/hallucinations/hallucination2.tscn"
 	);
 
 	CharacterBody2D Player;
@@ -109,28 +117,47 @@ public partial class WorldGenerator : Node2D
 				int left = layer.TileMapLayer.GetCellSourceId(
 					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.LeftSide)
 				);
-				int reft = layer.TileMapLayer.GetCellSourceId(
+				int right = layer.TileMapLayer.GetCellSourceId(
 					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
 				);
-
-				if (Random.Randf() > SanityItemSpawnChance)
-					continue;
-
-				if (left == -1 && reft == -1)
-					continue;
-
-				var entityInstance = Random.Randf() >= SanityRestorePreference ? SanityRestoringScene.Instantiate<Node2D>() : SanityDrainingScene.Instantiate<Node2D>();
-				entityInstance.Position = new Vector2I(
-					coords.X * TileSize,
-					(coords.Y + BottomLayer * LayerHeight) * TileSize
+				int up = layer.TileMapLayer.GetCellSourceId(
+					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.TopSide)
 				);
-				if (left != -1)
+				int down = layer.TileMapLayer.GetCellSourceId(
+					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.BottomSide)
+				);
+				
+				var spawnChance = Random.Randf();
+
+				if ((left != -1 || right != -1) && spawnChance < SanityItemSpawnChance)
 				{
-					var sprite = entityInstance.GetNode<Sprite2D>("Sprite2D");
-					if (sprite != null)
-						sprite.FlipH = true;
+					var entityInstance = Random.Randf() < SanityRestorePreference ? SanityRestoringScene.Instantiate<Node2D>() : SanityDrainingScene.Instantiate<Node2D>();
+					entityInstance.Position = new Vector2I(
+						coords.X * TileSize,
+						(coords.Y + BottomLayer * LayerHeight) * TileSize
+					);
+					// Flip sprite if attached to left wall
+					if (left != -1)
+					{
+						var sprite = entityInstance.GetNode<Sprite2D>("Sprite2D");
+						if (sprite != null)
+							sprite.FlipH = true;
+					}
+					EntityContainer.AddChild(entityInstance);
 				}
-				EntityContainer.AddChild(entityInstance);
+				else if ((left == -1 && right == -1 && up == -1 && down == -1) && spawnChance < HallucinationSpawnChance)
+				{
+					var entityInstance = Random.Randf() < 0.5 ? Hallucination1Scene.Instantiate<Node2D>() : Hallucination2Scene.Instantiate<Node2D>();
+					entityInstance.Position = new Vector2I(
+						coords.X * TileSize,
+						(coords.Y + BottomLayer * LayerHeight) * TileSize
+					);
+					var animationPlayer = entityInstance.GetNode<AnimationPlayer>("AnimationPlayer");
+					if (animationPlayer != null)
+						animationPlayer.Play("loop");
+					EntityContainer.AddChild(entityInstance);
+				}
+
 			}
 
 			BottomLayer++;
