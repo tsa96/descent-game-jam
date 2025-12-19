@@ -43,6 +43,7 @@ public partial class WorldGenerator : Node2D
 	static Vector2 LayerScale;
 	ConcurrentQueue<TileMapLayer> LayerQueue = new();
 	CancellationTokenSource LayerThreadCts = new();
+	Dictionary<int, TileMapLayer> Layers = new();
 
 	static readonly RandomNumberGenerator Random = new();
 	static readonly FastNoiseLite ManglerNoise = new();
@@ -83,6 +84,7 @@ public partial class WorldGenerator : Node2D
 		{
 			LayerContainer.AddChild(tileMapLayer);
 			tileMapLayer.Position = new Vector2(0, BottomLayer * LayerHeight * TileSize);
+			Layers.Add(BottomLayer, tileMapLayer);
 			BottomLayer++;
 		}
 
@@ -106,6 +108,8 @@ public partial class WorldGenerator : Node2D
 
 		foreach (TileMapLayer tml in LayerContainer.GetChildren().OfType<TileMapLayer>())
 			tml.QueueFree();
+
+		Layers.Clear();
 
 		Moles.Clear();
 
@@ -135,6 +139,40 @@ public partial class WorldGenerator : Node2D
 
 				GD.Print($"Generated layer in {Time.GetTicksMsec() - startTime}ms");
 			}
+		}
+	}
+
+	void DestroyBlocks(Vector2I pos, int strength)
+	{
+		int x = ((pos.X / TileSize) + ChunkHalfWidth);
+		int y = (pos.Y + 12) / TileSize;
+
+		var keys = Layers.Keys.ToList();
+		keys.Sort();
+		// TODO: This won't work on layer boundaries.
+		int top = keys[y / 16];
+		// TODO: wrong, doesn't handle multiple layers
+		TileMapLayer layer = Layers[top];
+		if (layer is null)
+		{
+			GD.PushWarning($"Failed to find TileMapLayer for pos X: ${x}, Y: ${y}");
+			return;
+		}
+
+		// Erase cells in circle of radius `strength`
+		int strengthSq = strength * strength;
+		for (int dx = -strength; dx <= strength; dx++)
+		for (int dy = -strength; dy <= strength; dy++)
+		{
+			if (dx * dx + dy * dy > strengthSq)
+				continue;
+
+			int nx = x + dx;
+			int ny = y + dy;
+			if (nx < 0 || ny < 0 || nx >= ChunkWidth || ny >= ChunkHeight)
+				continue;
+
+			layer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
 		}
 	}
 

@@ -231,13 +231,12 @@ public partial class WorldGenerator
 				float strength = bigChunk[x, y];
 				if (strength >= AirThreshold.Value)
 					continue;
-				{
-					TileMapLayer.SetCell(
-						new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
-						0,
-						GetAtlasCoords(bigChunk, x, y)
-					);
-				}
+
+				TileMapLayer.SetCell(
+					new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
+					0,
+					GetAtlasCoords(bigChunk, x, y)
+				);
 			}
 		}
 	}

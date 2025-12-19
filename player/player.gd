@@ -58,6 +58,7 @@ func reset() -> void:
 	dash_charged = false
 	last_walljump = 1000
 	footstep_audio_timer = 0
+	scroll_speed = 0
 
 
 func _physics_process(delta: float) -> void:
@@ -73,7 +74,6 @@ func _physics_process(delta: float) -> void:
 		
 	# Jumping
 	if Input.is_action_just_pressed("jump"):
-		print(velocity.y)
 		if is_on_floor():
 			velocity.y = JUMP_VELOCITY
 			footstep_audio_emitter.play()
@@ -118,7 +118,13 @@ func _physics_process(delta: float) -> void:
 	
 	play_character_audio(delta, just_dashed, just_fell, just_landed, prev_fall_speed)
 	play_animation(direction, just_dashed, just_landed)
+	
+	# TODO: Make proportional to fall speed, decreases sanity
+#	# Groundpound
+#	if just_landed and Input.is_action_pressed("groundpound"):
+#		world.DestroyBlocks(position, 3)
 		
+	# Sanity
 	if sanity > SANITY_MAX: 
 		sanity = SANITY_MAX
 	
