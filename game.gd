@@ -4,6 +4,7 @@ extends Node
 @onready var world := $World
 @onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
+@onready var debug_ui := $Interface/Debug
 
 @onready var bgm := $Audio/BGMEventEmitter as FmodEventEmitter2D
 @export var full_intensity_pos_threshold := 50000.0 as float
@@ -36,6 +37,10 @@ func _unhandled_input(input_event: InputEvent) -> void:
 	elif input_event.is_action_pressed(&"reset"):
 		reset()
 		get_tree().root.set_input_as_handled()
+	
+	elif input_event.is_action_pressed(&"toggle_devui"):
+		debug_ui.visible = !debug_ui.visible
+	
 
 func _process(_delta: float) -> void:
 	# Note that music transitions intensities at ~0.33 and ~0.66
