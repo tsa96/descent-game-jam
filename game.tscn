@@ -1,17 +1,25 @@
-[gd_scene load_steps=22 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=27 format=4 uid="uid://d2usby77vaxdw"]
 
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="Script" uid="uid://d158jerodttux" path="res://game.gd" id="1_hve3p"]
 [ext_resource type="PackedScene" uid="uid://dsqy8lxrpip13" path="res://player/player.tscn" id="2_feb5d"]
+[ext_resource type="Texture2D" uid="uid://ccrjoadc20a3f" path="res://assets/backgrounds/bg_static.png" id="3_215e1"]
+[ext_resource type="Texture2D" uid="uid://b1j1vynpmke07" path="res://assets/backgrounds/bg_parallax.png" id="3_lc2xo"]
 [ext_resource type="Texture2D" uid="uid://ethhruldn76x" path="res://assets/test_tileset_03.png" id="4_eow3j"]
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 [ext_resource type="PackedScene" uid="uid://bc08rouos7uh7" path="res://entities/beast/beast.tscn" id="5_mfdv2"]
-[ext_resource type="Script" uid="uid://d3kvxmqw08ya4" path="res://ui/sanity.gd" id="6_iotsf"]
+[ext_resource type="Script" path="res://ui/sanity.gd" id="6_iotsf"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="Texture2D" uid="uid://bi620gu5ioskk" path="res://assets/ui/title_paused.png" id="7_mfdv2"]
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
+
+[sub_resource type="Gradient" id="Gradient_215e1"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7sc4i"]
+gradient = SubResource("Gradient_215e1")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 resource_name = "Pog"
@@ -72,6 +80,8 @@ physics_layer_0/collision_layer = 1
 physics_layer_0/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_fc0e3")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_215e1"]
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j5wjh"]
 shader = ExtResource("6_ryrav")
 shader_parameter/brightness = 0.8
@@ -111,6 +121,21 @@ script = ExtResource("1_hve3p")
 process_mode = 1
 script = ExtResource("1_fc0e3")
 
+[node name="Sprite2D2" type="Sprite2D" parent="World"]
+position = Vector2(-4, 530)
+scale = Vector2(45.656254, 34.96875)
+texture = SubResource("GradientTexture2D_7sc4i")
+
+[node name="Parallax2D" type="Parallax2D" parent="World"]
+scale = Vector2(2, 2)
+
+[node name="Sprite2D2" type="Sprite2D" parent="World/Parallax2D"]
+texture = ExtResource("3_215e1")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Parallax2D"]
+position = Vector2(2, 112)
+texture = ExtResource("3_lc2xo")
+
 [node name="TileMapContainer" type="Node2D" parent="World"]
 
 [node name="Player" parent="World" instance=ExtResource("2_feb5d")]
@@ -136,7 +161,8 @@ position_smoothing_enabled = true
 position_smoothing_speed = 20.0
 
 [node name="Beast" parent="World/Sticky" instance=ExtResource("5_mfdv2")]
-position = Vector2(158, -296)
+material = SubResource("ShaderMaterial_215e1")
+position = Vector2(200.00002, -218)
 scale = Vector2(3, 3)
 
 [node name="Interface" type="CanvasLayer" parent="."]
