@@ -5,15 +5,38 @@ extends Node
 @onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
 @onready var debug_ui := $Interface/Debug
-
 @onready var bgm := $Audio/BGMEventEmitter as FmodEventEmitter2D
-@export var full_intensity_pos_threshold := 50000.0 as float
 
 
-# Completely reset game state. Bye!
-func reset() -> void:
-	world.ResetWorld()
-	player.reset()
+# Curve resource describe how scroll speed and music change over time.
+# Y pos is the scrolling speed, and music intensity increases occur at the 3 rightmost points.
+var game_speed_curve := load("res://game_speed_curve.tres") as Curve
+# Maximum Y position on the curve. Past this point we extrapolate.
+var curve_max_x := 50000.0 as float
+var curve_max_y = game_speed_curve.sample(curve_max_x)
+var curve_grad_extrapolated = (curve_max_y - game_speed_curve.sample(curve_max_x - 1000)) / 1000
+var p1 = game_speed_curve.get_point_position(1)
+var p2 = game_speed_curve.get_point_position(2)
+var p3 = game_speed_curve.get_point_position(3)
+var posMax = 0
+
+
+func _process(_delta: float) -> void:
+	var pos = maxf(posMax, player.position.y)
+		
+	if pos <= curve_max_x:
+		player.scroll_speed = game_speed_curve.sample(pos / curve_max_x)
+	else:
+		# y = mx + c type shit
+		player.scroll_speed = pos * curve_grad_extrapolated + curve_max_y 
+	
+	# Note that music transitions intensities at ~0.5 and ~1. All other values are meaningless.
+	if pos > p3[0]:
+		bgm.set_parameter("Intensity", 1.0)
+	elif pos > p2[0]:
+		bgm.set_parameter("Intensity", 0.5)
+	else:
+		bgm.set_parameter("Intensity", 0.0)
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
@@ -42,6 +65,7 @@ func _unhandled_input(input_event: InputEvent) -> void:
 		debug_ui.visible = !debug_ui.visible
 	
 
-func _process(_delta: float) -> void:
-	# Note that music transitions intensities at ~0.5 and ~1. All other values are meaningless.
-	bgm.set_parameter("Intensity", player.position.y / full_intensity_pos_threshold)
+# Completely reset game state. Bye!
+func reset() -> void:
+	world.ResetWorld()
+	player.reset()

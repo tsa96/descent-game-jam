@@ -29,6 +29,7 @@ const FALLING_FAST_ANIM = "fastfall"
 const DASH_ANIM = "dash"
 const LANDING_ANIM = "land"
 
+var scroll_speed: float
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
 var dash_charged: bool
 var last_walljump: float
@@ -40,6 +41,7 @@ var regen_on: float
 @onready var player_animator := $PlayerAnimator as AnimationPlayer
 @onready var player_sprite := $PlayerSprite as Sprite2D
 @onready var camera := $"../Camera" as Camera2D # Actually a candle
+@onready var world := $"../"
 
 @onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
 @onready var land_high_vel_audio_emitter := $Audio/LandHighVelocityAudioEventEmitter as FmodEventEmitter2D
@@ -210,8 +212,9 @@ func is_close_to_wall() -> bool:
 	# before sideways movement makes the check fail - use raycasts instead (configure in 2D view!)
 	return wall_jump_ray_left.is_colliding() or wall_jump_ray_right.is_colliding()
 
+
 func process_camera(delta: float) -> void:
-	camera.position.y = maxf(position.y, camera.position.y + delta * 100)
+	camera.position.y = maxf(position.y, camera.position.y + scroll_speed * delta)
 	
 
 func _on_regen_timeout() -> void:
