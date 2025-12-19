@@ -1,11 +1,48 @@
-[gd_scene load_steps=4 format=3 uid="uid://ihe204m15feh"]
+[gd_scene load_steps=7 format=3 uid="uid://ihe204m15feh"]
 
 [ext_resource type="Script" uid="uid://b02rtjnqkjkh1" path="res://entities/sanity_restoring/sanity_restoring.gd" id="1_fib4r"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_g1lc0"]
+[ext_resource type="Texture2D" uid="uid://cohhbuar3cml0" path="res://assets/hallucinations/hallucination1.png" id="2_l2n42"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c4ug5"]
-size = Vector2(16, 16)
+size = Vector2(24, 19)
+
+[sub_resource type="Animation" id="Animation_l2n42"]
+resource_name = "loop"
+length = 4.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 4.2, 4.4, 4.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+}
+
+[sub_resource type="Animation" id="Animation_uens3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fubkx"]
+_data = {
+&"RESET": SubResource("Animation_uens3"),
+&"loop": SubResource("Animation_l2n42")
+}
 
 [node name="SanityRestoring" type="Area2D"]
 collision_layer = 3
@@ -13,12 +50,17 @@ collision_mask = 3
 script = ExtResource("1_fib4r")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(7.999999, 7.999999)
-scale = Vector2(16, 16)
-texture = SubResource("PlaceholderTexture2D_g1lc0")
+position = Vector2(9, 11)
+texture = ExtResource("2_l2n42")
+hframes = 24
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(8, 8)
+position = Vector2(12, 9.5)
 shape = SubResource("RectangleShape2D_c4ug5")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_fubkx")
+}
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
