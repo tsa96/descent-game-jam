@@ -225,3 +225,6 @@ func sanity_gain(damage: float):
 	sanity += damage
 	dash_charged = true
 	regen_on = true
+
+func sanity_drain(damage: float):
+	sanity -= damage

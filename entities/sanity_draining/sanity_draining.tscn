@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://b6nc4327odd2i"]
+
+[ext_resource type="Script" uid="uid://wn43pcb1yke3" path="res://entities/sanity_draining/sanity_draining.gd" id="1_qvdn8"]
+[ext_resource type="Texture2D" uid="uid://jjltu7ydg3mx" path="res://assets/pickup/mushroom_bad.png" id="2_xa4ve"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c4ug5"]
+size = Vector2(16, 16)
+
+[node name="SanityRestoring" type="Area2D"]
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_qvdn8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(8, 8)
+texture = ExtResource("2_xa4ve")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(8, 8)
+shape = SubResource("RectangleShape2D_c4ug5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
