@@ -3,21 +3,6 @@
 [ext_resource type="Script" uid="uid://ddbwt6ntihs35" path="res://player/player.gd" id="3"]
 [ext_resource type="Texture2D" uid="uid://blrwea1erll" path="res://assets/player.png" id="3_g1dw6"]
 
-[sub_resource type="Animation" id="Animation_rkbax"]
-resource_name = "idle"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("PlayerSprite:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-
 [sub_resource type="Animation" id="Animation_g1dw6"]
 length = 0.001
 tracks/0/type = "value"
@@ -33,9 +18,9 @@ tracks/0/keys = {
 "values": [0]
 }
 
-[sub_resource type="Animation" id="Animation_yw30f"]
-resource_name = "walk"
-length = 1.2
+[sub_resource type="Animation" id="Animation_hg6s5"]
+resource_name = "dash"
+length = 0.8
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -43,10 +28,10 @@ tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.59999996, 0.79999995, 1),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [1, 2, 3, 4, 5, 6]
+"values": [12, 13]
 }
 
 [sub_resource type="Animation" id="Animation_qjkh3"]
@@ -64,21 +49,6 @@ tracks/0/keys = {
 "values": [8]
 }
 
-[sub_resource type="Animation" id="Animation_g6k8r"]
-resource_name = "jump"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("PlayerSprite:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [7]
-}
-
 [sub_resource type="Animation" id="Animation_boad6"]
 resource_name = "fastfall"
 tracks/0/type = "value"
@@ -92,6 +62,36 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [9]
+}
+
+[sub_resource type="Animation" id="Animation_rkbax"]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PlayerSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_g6k8r"]
+resource_name = "jump"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PlayerSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [7]
 }
 
 [sub_resource type="Animation" id="Animation_rgyib"]
@@ -110,9 +110,9 @@ tracks/0/keys = {
 "values": [10, 0]
 }
 
-[sub_resource type="Animation" id="Animation_hg6s5"]
-resource_name = "dash"
-length = 0.8
+[sub_resource type="Animation" id="Animation_yw30f"]
+resource_name = "walk"
+length = 1.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -120,10 +120,10 @@ tracks/0/path = NodePath("PlayerSprite:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.59999996, 0.79999995, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [12, 13]
+"values": [1, 2, 3, 4, 5, 6]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qjkh3"]
@@ -203,5 +203,10 @@ volume = 0.5
 fmod_parameters/Bitcrushed/id = -4088003812932965492
 fmod_parameters/Bitcrushed = 0.0
 fmod_parameters/Bitcrushed/variant_type = 3
+
+[node name="DashAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/Dash"
+event_guid = "{8a569a89-1715-42f5-b1ae-0dca887adc05}"
+volume = 0.5
 
 [connection signal="timeout" from="Regen" to="." method="_on_regen_timeout"]

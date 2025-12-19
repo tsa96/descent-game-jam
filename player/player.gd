@@ -43,6 +43,7 @@ var regen_on: float
 
 @onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
 @onready var land_high_vel_audio_emitter := $Audio/LandHighVelocityAudioEventEmitter as FmodEventEmitter2D
+@onready var dash_audio_emitter := $Audio/DashAudioEventEmitter as FmodEventEmitter2D
 
 
 func _ready() -> void:
@@ -112,8 +113,8 @@ func _physics_process(delta: float) -> void:
 	
 	var just_landed := not was_on_ground and is_on_floor() as bool
 	var just_fell := was_on_ground and not is_on_floor() as bool
-	play_footstep_audio(delta, just_fell, just_landed, prev_fall_speed)
 	
+	play_character_audio(delta, just_dashed, just_fell, just_landed, prev_fall_speed)
 	play_animation(direction, just_dashed, just_landed)
 		
 	if sanity > SANITY_MAX: 
@@ -142,12 +143,15 @@ func _physics_process(delta: float) -> void:
 	print(sanity)
 
 
-func play_footstep_audio(delta: float, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+func play_character_audio(delta: float, just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+	if just_dashed:
+		dash_audio_emitter.play_one_shot()
+	
 	if just_landed and prev_fall_speed >= HIGH_LANDING_VELOCITY:
-		land_high_vel_audio_emitter.play()
+		land_high_vel_audio_emitter.play_one_shot()
 	elif (is_on_floor() and velocity.x > 0.1) or just_fell or just_landed:
 		if footstep_audio_timer <= 0.0:
-			footstep_audio_emitter.play()
+			footstep_audio_emitter.play_one_shot()
 			footstep_audio_timer = FOOTSTEP_AUDIO_TIMER_RESET
 		else:
 			footstep_audio_timer -= delta
