@@ -69,7 +69,7 @@ func _physics_process(delta: float) -> void:
 		
 	# Wall climbing
 	last_walljump += delta
-	if Input.is_action_pressed("jump") and is_on_wall() and direction != 0 and last_walljump > WALL_JUMP_COOLDOWN:
+	if Input.is_action_pressed("jump") and is_on_wall() and direction != 0 and last_walljump > WALL_JUMP_COOLDOWN and velocity.y > 0:
 		velocity.y = maxf(0, velocity.y - gravity * WALL_CLIMB_SLOWDOWN * delta)
 		
 	# Jumping
