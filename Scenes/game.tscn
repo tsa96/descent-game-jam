@@ -1,6 +1,6 @@
-[gd_scene load_steps=21 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=22 format=4 uid="uid://d2usby77vaxdw"]
 
-[ext_resource type="Script" uid="uid://cmfap8ewr61k2" path="res://game.gd" id="1_7jktm"]
+[ext_resource type="Script" uid="uid://cmfap8ewr61k2" path="res://scripts/game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://dsqy8lxrpip13" path="res://player/player.tscn" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://ethhruldn76x" path="res://assets/test_tileset_03.png" id="4_eow3j"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
+[ext_resource type="PackedScene" uid="uid://ihe204m15feh" path="res://Scenes/sanity_restoring.tscn" id="12_rku1e"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 resource_name = "Pog"
@@ -113,6 +114,7 @@ script = ExtResource("1_fc0e3")
 [node name="TileMapContainer" type="Node2D" parent="World"]
 
 [node name="Player" parent="World" instance=ExtResource("2_feb5d")]
+collision_layer = 16
 
 [node name="TileMapTemplateLayer" type="TileMapLayer" parent="World"]
 scale = Vector2(2, 2)
@@ -318,6 +320,10 @@ fmod_parameters/Intensity/variant_type = 3
 
 [node name="FmodListener2D" type="FmodListener2D" parent="Audio"]
 
+[node name="SanityRestoring" parent="." instance=ExtResource("12_rku1e")]
+position = Vector2(-20, -14)
+
+[connection signal="tree_entered" from="World/Player" to="SanityRestoring" method="_on_player_tree_entered"]
 [connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/ResumeButton" to="Interface/PauseMenu" method="_on_resume_button_pressed"]
 [connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/ResetButton" to="." method="reset"]
 [connection signal="pressed" from="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer/QuitButton" to="Interface/PauseMenu" method="_on_quit_button_pressed"]

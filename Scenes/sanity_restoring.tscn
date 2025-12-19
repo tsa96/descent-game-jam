@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://ihe204m15feh"]
+
+[ext_resource type="Script" uid="uid://dwlodeja3j0ay" path="res://scripts/Entities/sanity_restoring.gd" id="1_vv026"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_g1lc0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c4ug5"]
+size = Vector2(12, 12)
+
+[node name="SanityRestoring" type="Area2D"]
+collision_layer = 16
+collision_mask = 16
+script = ExtResource("1_vv026")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(7.748604e-07, 7.748604e-07)
+scale = Vector2(12.000001, 12.000001)
+texture = SubResource("PlaceholderTexture2D_g1lc0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_c4ug5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
