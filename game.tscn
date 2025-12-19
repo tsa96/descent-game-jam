@@ -1,10 +1,12 @@
-[gd_scene load_steps=20 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=22 format=4 uid="uid://d2usby77vaxdw"]
 
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="Script" uid="uid://d158jerodttux" path="res://game.gd" id="1_hve3p"]
 [ext_resource type="PackedScene" uid="uid://dsqy8lxrpip13" path="res://player/player.tscn" id="2_feb5d"]
 [ext_resource type="Texture2D" uid="uid://ethhruldn76x" path="res://assets/test_tileset_03.png" id="4_eow3j"]
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
+[ext_resource type="PackedScene" uid="uid://bc08rouos7uh7" path="res://entities/beast/beast.tscn" id="5_mfdv2"]
+[ext_resource type="Script" uid="uid://d3kvxmqw08ya4" path="res://ui/sanity.gd" id="6_iotsf"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="Texture2D" uid="uid://bi620gu5ioskk" path="res://assets/ui/title_paused.png" id="7_mfdv2"]
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
@@ -120,19 +122,76 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AADb/+z/AAAAAAAAAADd/+z/AAAAAAAAAADe/+z/AAAAAAAAAADf/+z/AAAAAAAAAADd/+3/AAAAAAAAAADd/+7/AAAAAAAAAADd/+//AAAAAAAAAADd//D/AAAAAAAAAADe//D/AAAAAAAAAADf//D/AAAAAAAAAADe/+7/AAAAAAAAAADf/+7/AAAAAAAAAADh/+z/AAAAAAAAAADh/+3/AAAAAAAAAADh/+7/AAAAAAAAAADh/+//AAAAAAAAAADh//D/AAAAAAAAAADi//D/AAAAAAAAAADk/+z/AAAAAAAAAADk/+3/AAAAAAAAAADk/+7/AAAAAAAAAADk/+//AAAAAAAAAADk//D/AAAAAAAAAADl//D/AAAAAAAAAADn/+z/AAAAAAAAAADn/+3/AAAAAAAAAADn/+7/AAAAAAAAAADn/+//AAAAAAAAAADn//D/AAAAAAAAAADo//D/AAAAAAAAAADp//D/AAAAAAAAAADp/+//AAAAAAAAAADp/+7/AAAAAAAAAADp/+3/AAAAAAAAAADp/+z/AAAAAAAAAADo/+z/AAAAAAAAAADz//T/AAAAAAAAAAD0//P/AAAAAAAAAADo/+f/AAAAAAAAAADg/+n/AAAAAAAAAADZ/+3/AAAAAAAAAADZ/+7/AAAAAAAAAADZ/+//AAAAAAAAAADZ//D/AAAAAAAAAADa/+7/AAAAAAAAAADb/+3/AAAAAAAAAADb/+7/AAAAAAAAAADb/+//AAAAAAAAAADb//D/AAAAAAAAAADi//P/AAADAAMAAADj//P/AAADAAMAAADk//P/AAADAAMAAADi//T/AAADAAQAAADj//T/AAADAAQAAADk//T/AAADAAQAAADk//X/AAADAAUAAADj//X/AAADAAUAAADi//X/AAADAAUAAAA=")
 tile_set = SubResource("TileSet_7jktm")
 
-[node name="Camera" type="Camera2D" parent="World"]
-position = Vector2(0, -28)
+[node name="EntityContainer" type="Node2D" parent="World"]
+
+[node name="Sticky" type="Node2D" parent="World"]
+
+[node name="Camera" type="Camera2D" parent="World/Sticky"]
 offset = Vector2(0, 50)
 zoom = Vector2(1.5, 1.5)
 process_callback = 0
 limit_left = 0
 limit_right = 0
 position_smoothing_enabled = true
-position_smoothing_speed = 10.0
+position_smoothing_speed = 20.0
 
-[node name="EntityContainer" type="Node2D" parent="World"]
+[node name="Beast" parent="World/Sticky" instance=ExtResource("5_mfdv2")]
+position = Vector2(158, -296)
+scale = Vector2(3, 3)
 
 [node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="Interface"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 622.0
+offset_top = 764.0
+offset_right = 662.0
+offset_bottom = 804.0
+
+[node name="Sanity" type="Control" parent="Interface/HUD"]
+anchors_preset = 0
+offset_left = -610.0
+offset_top = 234.0
+offset_right = -570.0
+offset_bottom = 274.0
+script = ExtResource("6_iotsf")
+
+[node name="Label" type="Label" parent="Interface/HUD/Sanity"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 4.0
+offset_right = 50.0
+offset_bottom = 27.0
+text = "Sanity"
+
+[node name="BarOuter" type="ColorRect" parent="Interface/HUD/Sanity"]
+layout_mode = 0
+offset_left = 64.0
+offset_right = 464.0
+offset_bottom = 32.0
+
+[node name="BarInner" type="ColorRect" parent="Interface/HUD/Sanity/BarOuter"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 396.0
+offset_bottom = 28.0
+color = Color(0.9425624, 0, 0.23565996, 1)
+
+[node name="Amount" type="Label" parent="Interface/HUD/Sanity/BarOuter"]
+layout_mode = 0
+offset_left = 330.0
+offset_top = 4.0
+offset_right = 378.0
+offset_bottom = 27.0
+theme_override_colors/font_color = Color(0.035065178, 0.94504756, 0, 1)
+text = "Sanity"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Interface/HUD/Sanity"]
+layout_mode = 0
+offset_right = 52.0
+offset_bottom = 40.0
 
 [node name="PauseMenu" type="Control" parent="Interface"]
 process_mode = 3
