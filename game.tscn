@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="7_eow3j"]
-[ext_resource type="Texture2D" uid="uid://mwsm85a1k3yq" path="res://assets/ui/title.png" id="7_mfdv2"]
+[ext_resource type="Texture2D" uid="uid://bi620gu5ioskk" path="res://assets/ui/title_paused.png" id="7_mfdv2"]
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
