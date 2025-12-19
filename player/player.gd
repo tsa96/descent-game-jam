@@ -220,6 +220,7 @@ func process_camera(delta: float) -> void:
 func _on_regen_timeout() -> void:
 	regen_on = true
 
+
 func sanity_gain(damage: int):
 	sanity += damage
 	dash_charged = true

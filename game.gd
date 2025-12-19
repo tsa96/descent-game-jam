@@ -1,6 +1,9 @@
 class_name Game
 extends Node
 
+
+
+
 @onready var world := $World
 @onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
@@ -12,7 +15,7 @@ extends Node
 # Y pos is the scrolling speed, and music intensity increases occur at the 3 rightmost points.
 var game_speed_curve := load("res://game_speed_curve.tres") as Curve
 # Maximum Y position on the curve. Past this point we extrapolate.
-var curve_max_x := 50000.0 as float
+var curve_max_x: float = 12000.0
 var curve_max_y = game_speed_curve.sample(curve_max_x)
 var curve_grad_extrapolated = (curve_max_y - game_speed_curve.sample(curve_max_x - 1000)) / 1000
 var p1 = game_speed_curve.get_point_position(1)
@@ -24,16 +27,17 @@ var posMax = 0
 func _process(_delta: float) -> void:
 	var pos = maxf(posMax, player.position.y)
 		
+	var p = pos / curve_max_x
 	if pos <= curve_max_x:
-		player.scroll_speed = game_speed_curve.sample(pos / curve_max_x)
+		player.scroll_speed = game_speed_curve.sample(p) * 100
 	else:
 		# y = mx + c type shit
 		player.scroll_speed = pos * curve_grad_extrapolated + curve_max_y 
 	
 	# Note that music transitions intensities at ~0.5 and ~1. All other values are meaningless.
-	if pos > p3[0]:
+	if p > p3[0]:
 		bgm.set_parameter("Intensity", 1.0)
-	elif pos > p2[0]:
+	elif p > p2[0]:
 		bgm.set_parameter("Intensity", 0.5)
 	else:
 		bgm.set_parameter("Intensity", 0.0)
