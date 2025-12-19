@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=21 format=4 uid="uid://d2usby77vaxdw"]
 
 [ext_resource type="Script" uid="uid://cmfap8ewr61k2" path="res://game.gd" id="1_7jktm"]
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
@@ -7,6 +7,10 @@
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="7_eow3j"]
+[ext_resource type="Texture2D" uid="uid://mwsm85a1k3yq" path="res://assets/ui/title.png" id="7_mfdv2"]
+[ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
+[ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
+[ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fc0e3"]
 resource_name = "Pog"
@@ -164,7 +168,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.5019608)
+color = Color(1, 1, 1, 0.1254902)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface/PauseMenu/BackgroundShader/ColorRect"]
 layout_mode = 1
@@ -181,17 +185,10 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
-[node name="PausedLabel" type="Label" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
+[node name="Title" type="TextureRect" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
-theme_override_colors/font_outline_color = Color(0.6857328, 3.1044335e-06, 5.7756904e-07, 1)
-theme_override_constants/outline_size = 12
-theme_override_constants/shadow_outline_size = 4
-theme_override_fonts/font = ExtResource("7_eow3j")
-theme_override_font_sizes/font_size = 128
-text = "Paused"
-horizontal_alignment = 1
-vertical_alignment = 1
+texture = ExtResource("7_mfdv2")
+stretch_mode = 3
 
 [node name="ResumeButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
 layout_mode = 2
@@ -206,7 +203,8 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
 theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
-text = "Resume"
+icon = ExtResource("8_j5wjh")
+icon_alignment = 1
 
 [node name="ResetButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
 layout_mode = 2
@@ -221,8 +219,8 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
 theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
-text = "Reset
-"
+icon = ExtResource("9_vef74")
+icon_alignment = 1
 
 [node name="QuitButton" type="Button" parent="Interface/PauseMenu/BackgroundShader/ColorRect/VBoxContainer"]
 layout_mode = 2
@@ -237,7 +235,28 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_vef74")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_eow3j")
 theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
-text = "Quit"
+icon = ExtResource("10_hve3p")
+icon_alignment = 1
+
+[node name="ColorRect2" type="ColorRect" parent="Interface/PauseMenu/BackgroundShader"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1427.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5019608)
+
+[node name="ColorRect3" type="ColorRect" parent="Interface/PauseMenu/BackgroundShader"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1427.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5019608)
 
 [node name="Debug" type="Control" parent="Interface"]
 process_mode = 3
@@ -246,6 +265,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -1738.0
+offset_top = -305.0
+offset_right = -1738.0
+offset_bottom = -305.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
