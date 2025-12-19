@@ -158,14 +158,6 @@ libraries = {
 &"": SubResource("AnimationLibrary_qjkh3")
 }
 
-[node name="Camera" type="Camera2D" parent="."]
-position = Vector2(0, -28)
-offset = Vector2(0, 50)
-zoom = Vector2(1.5, 1.5)
-process_callback = 0
-limit_left = 0
-limit_right = 0
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(2.9802288e-07, 2.9802317e-07)
 scale = Vector2(0.9999983, 0.9999983)
