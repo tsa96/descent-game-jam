@@ -1,0 +1,154 @@
+[gd_scene load_steps=14 format=3 uid="uid://m15t7pvc5tol"]
+
+[ext_resource type="Script" uid="uid://be61ibbjaoe4q" path="res://title.gd" id="1_7lgly"]
+[ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="2_mom7w"]
+[ext_resource type="Texture2D" uid="uid://cqq871vptiy67" path="res://assets/ui/buttons/start.png" id="3_7lgly"]
+[ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="4_0824t"]
+[ext_resource type="Texture2D" uid="uid://clihudg0a3lfv" path="res://assets/ui/title_sheet.png" id="5_mom7w"]
+
+[sub_resource type="Theme" id="Theme_nuqgq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lx2ly"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jil77"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_16uvt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_upcoo"]
+
+[sub_resource type="Animation" id="Animation_mom7w"]
+resource_name = "droop"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Title:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.3999999, 2.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+
+[sub_resource type="Animation" id="Animation_7lgly"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Title:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0824t"]
+_data = {
+&"RESET": SubResource("Animation_7lgly"),
+&"droop": SubResource("Animation_mom7w")
+}
+
+[node name="Title" type="Node2D"]
+script = ExtResource("1_7lgly")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 960.0
+offset_top = 540.0
+offset_right = 1000.0
+offset_bottom = 580.0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="BG" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+color = Color(0.05882353, 0.03529412, 0.105882354, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/BG"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.5
+offset_top = -144.0
+offset_right = 160.5
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="StartButton" type="Button" parent="Control/BG/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_nuqgq")
+theme_override_colors/font_color = Color(0.9999991, 0.8988213, 0.8925482, 1)
+theme_override_colors/font_focus_color = Color(0.99999887, 0.57228845, 0.5626233, 1)
+theme_override_colors/font_hover_color = Color(0.99999183, 0.61589384, 0.6022827, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.99992496, 0.19319502, 0.28311372, 1)
+theme_override_fonts/font = ExtResource("2_mom7w")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_lx2ly")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_jil77")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_16uvt")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_upcoo")
+icon = ExtResource("3_7lgly")
+icon_alignment = 1
+
+[node name="QuitButton" type="Button" parent="Control/BG/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_nuqgq")
+theme_override_colors/font_color = Color(0.9999991, 0.8988213, 0.8925482, 1)
+theme_override_colors/font_focus_color = Color(0.99999887, 0.57228845, 0.5626233, 1)
+theme_override_colors/font_hover_color = Color(0.99999183, 0.61589384, 0.6022827, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.99992496, 0.19319502, 0.28311372, 1)
+theme_override_fonts/font = ExtResource("2_mom7w")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_lx2ly")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_jil77")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_16uvt")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_upcoo")
+icon = ExtResource("4_0824t")
+icon_alignment = 1
+
+[node name="Title" type="Sprite2D" parent="."]
+position = Vector2(952, 300)
+texture = ExtResource("5_mom7w")
+hframes = 10
+
+[node name="TitleAnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_0824t")
+}
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="MusicBankLoader" type="FmodBankLoader" parent="Audio"]
+bank_paths = ["res://assets/audio/Desktop/Music.bank", "res://assets/audio/Desktop/Master.bank"]
+
+[node name="BGMEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/BGM"
+event_guid = "{254472ba-a352-4f2c-a09d-aca82d3ade04}"
+autoplay = true
+volume = 0.4
+fmod_parameters/Intensity/id = 5526606327068711223
+fmod_parameters/Intensity = 0.0
+fmod_parameters/Intensity/variant_type = 3
+fmod_parameters/Paused/id = 5088348590844561388
+fmod_parameters/Paused = 0.0
+fmod_parameters/Paused/variant_type = 3
+
+[node name="FmodListener2D" type="FmodListener2D" parent="Audio"]
+
+[connection signal="pressed" from="Control/BG/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="Control/BG/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
