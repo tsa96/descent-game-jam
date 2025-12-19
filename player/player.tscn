@@ -172,7 +172,6 @@ target_position = Vector2(26, 0)
 collide_with_areas = true
 
 [node name="Regen" type="Timer" parent="."]
-wait_time = 0.5
 
 [node name="Audio" type="Node2D" parent="."]
 

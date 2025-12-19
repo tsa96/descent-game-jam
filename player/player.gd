@@ -106,7 +106,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("dash") and dash_charged and direction != 0:
 		velocity.x = direction * DASH_SPEED
 		dash_charged = false
-		sanity -= 20
+		sanity -= 15
 		regen_on = false
 		just_dashed = true
 		$Regen.start()
@@ -136,7 +136,7 @@ func _physics_process(delta: float) -> void:
 	
 	# If you are falling at terminal velocity, sanity will go down
 	if velocity.y == TERMINAL_VELOCITY:
-		sanity -= 0.5
+		sanity -= 1.5
 		regen_on = false
 		$Regen.start()
 	

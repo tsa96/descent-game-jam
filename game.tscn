@@ -153,7 +153,7 @@ tile_set = SubResource("TileSet_7jktm")
 [node name="Sticky" type="Node2D" parent="World"]
 
 [node name="Camera" type="Camera2D" parent="World/Sticky"]
-offset = Vector2(0, 50)
+offset = Vector2(0, -125)
 zoom = Vector2(1.5, 1.5)
 process_callback = 0
 limit_left = 0
@@ -163,7 +163,7 @@ position_smoothing_speed = 20.0
 
 [node name="Beast" parent="World/Sticky" instance=ExtResource("5_mfdv2")]
 material = SubResource("ShaderMaterial_215e1")
-position = Vector2(240, -420)
+position = Vector2(240, -588)
 scale = Vector2(2, 2)
 
 [node name="Interface" type="CanvasLayer" parent="."]

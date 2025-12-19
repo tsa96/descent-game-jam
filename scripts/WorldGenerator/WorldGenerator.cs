@@ -31,8 +31,8 @@ public partial class WorldGenerator : Node2D
 	const int TileSize = 16;
 	const int MaxMoles = 8;
 
-	const float SanityItemSpawnChance = 0.01f;
-	const float SanityRestorePreference = 0.6f;
+	const float SanityItemSpawnChance = 0.02f;
+	const float SanityRestorePreference = 0.3f;
 	static PackedScene SanityRestoringScene = GD.Load<PackedScene>(
 		"res://entities/sanity_restoring/sanity_restoring.tscn"
 	);
