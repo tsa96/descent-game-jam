@@ -43,5 +43,5 @@ func _unhandled_input(input_event: InputEvent) -> void:
 	
 
 func _process(_delta: float) -> void:
-	# Note that music transitions intensities at ~0.33 and ~0.66
-	bgm.set_parameter("Intensity", (player.position.y / full_intensity_pos_threshold) * (2.0 / 3.0))
+	# Note that music transitions intensities at ~0.5 and ~1. All other values are meaningless.
+	bgm.set_parameter("Intensity", player.position.y / full_intensity_pos_threshold)
