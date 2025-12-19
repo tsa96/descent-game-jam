@@ -40,7 +40,7 @@ var regen_on: float
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
 @onready var player_animator := $PlayerAnimator as AnimationPlayer
 @onready var player_sprite := $PlayerSprite as Sprite2D
-@onready var camera := $"../Camera" as Camera2D # Actually a candle
+@onready var sticky := $"../Sticky" as Node2D
 @onready var world := $"../"
 
 @onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
@@ -56,7 +56,7 @@ func reset() -> void:
 	sanity = SANITY_MAX
 	position = START_POS
 	velocity = Vector2(0, 0)
-	camera.position = START_POS
+	sticky.position = START_POS
 	dash_charged = false
 	last_walljump = 1000
 	footstep_audio_timer = 0
@@ -214,7 +214,7 @@ func is_close_to_wall() -> bool:
 
 
 func process_camera(delta: float) -> void:
-	camera.position.y = maxf(position.y, camera.position.y + scroll_speed * delta)
+	sticky.position.y = maxf(position.y, sticky.position.y + scroll_speed * delta)
 	
 
 func _on_regen_timeout() -> void:

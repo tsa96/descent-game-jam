@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bc08rouos7uh7"]
+
+[ext_resource type="Script" uid="uid://bjsshssjuf1e7" path="res://entities/beast/beast.gd" id="1_5r6js"]
+[ext_resource type="Texture2D" uid="uid://c3a1adtqn8xqm" path="res://assets/beast/beast_full.png" id="1_ng3ou"]
+
+[node name="Beast" type="Node2D"]
+script = ExtResource("1_5r6js")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+position = Vector2(-128, -112)
+polygon = PackedVector2Array(0, 0, 256, 0, 238.745, 110.74, 194.905, 149.54, 126.8, 157.35, 64, 150.495, 13.16, 100.055)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ng3ou")

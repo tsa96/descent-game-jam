@@ -10,10 +10,12 @@ var open_sound := preload("res://assets/audio/pause.ogg")
 func _ready() -> void:
 	hide()
 
+
 func close() -> void:
 	bgm.set_parameter("Paused", 0)
 	get_tree().paused = false
 	hide()
+
 
 func open() -> void:
 	show()
@@ -22,8 +24,10 @@ func open() -> void:
 	audio_player.play()
 	bgm.set_parameter("Paused", 1)
 
+
 func _on_resume_button_pressed() -> void:
 	close()
+
 
 func _on_quit_button_pressed() -> void:
 	if visible:

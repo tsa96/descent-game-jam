@@ -2,8 +2,6 @@ class_name Game
 extends Node
 
 
-
-
 @onready var world := $World
 @onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
@@ -32,7 +30,7 @@ func _process(_delta: float) -> void:
 		player.scroll_speed = game_speed_curve.sample(p) * 100
 	else:
 		# y = mx + c type shit
-		player.scroll_speed = pos * curve_grad_extrapolated + curve_max_y 
+		player.scroll_speed = pos * curve_grad_extrapolated + curve_max_y * 100
 	
 	# Note that music transitions intensities at ~0.5 and ~1. All other values are meaningless.
 	if p > p3[0]:
