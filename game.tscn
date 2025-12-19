@@ -90,10 +90,11 @@ script/source = "extends Label
 @onready var player := $\"../../../World/Player\" as Player
 
 func _process(_delta: float) -> void:
-	set_text(\"FPS %d \\nX: %d \\nY: %d \\n\" % [
+	set_text(\"FPS %d \\nX: %d \\nY: %d \\nSanity: %d\\n\" % [
 		Engine.get_frames_per_second(),
 		player.position.x,
-		player.position.y
+		player.position.y,
+		player.sanity
 	])
 "
 
