@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Godot;
 
 // Multithreaded, deterministic, chunking world gen powered by...
-
+//
 // - THE MOLE:    Weighted random tunnels downwards through chunks
 // - THE MANGLER: Apply random noise on top of generate mole tunnels
 // - THE MUNCHER: Cellular automata that eats away at rocks with surrounding air
@@ -96,7 +96,7 @@ public partial class WorldGenerator : Node2D
 		// Stall whilst any generation finishes. Other thread shares some state unsafely with
 		// us (>:D), could crash if we clear out the moles in this thread.
 		// This shouldn't be noticeable, unless we have a mole looping forever (that would've
-		// happened in singlethreaded version anyway, who cares).
+		// happened in single-threaded version anyway, who cares).
 		while (RequestedLayers > 0) { }
 
 		// Reset noise

@@ -58,6 +58,7 @@ func reset() -> void:
 	last_walljump = 1000
 	footstep_audio_timer = 0
 
+
 func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		dash_charged = true
@@ -136,7 +137,7 @@ func _physics_process(delta: float) -> void:
 		regen_on = false
 		$Regen.start()
 	
-	#Death
+	# Death
 	if sanity <= 0:
 		reset()
 		
@@ -157,6 +158,7 @@ func play_character_audio(delta: float, just_dashed: bool, just_fell: bool, just
 			footstep_audio_timer -= delta
 	else:
 		footstep_audio_timer = 0
+
 
 func play_animation(direction: float, just_dashed: bool, just_landed: bool) -> void:
 	if not is_zero_approx(direction):
@@ -199,6 +201,7 @@ func is_close_to_wall() -> bool:
 	# is_on_wall is too tight, extremely hard to do a walljump in the opposite direction
 	# before sideways movement makes the check fail - use raycasts instead (configure in 2D view!)
 	return wall_jump_ray_left.is_colliding() or wall_jump_ray_right.is_colliding()
+
 
 func _on_regen_timeout() -> void:
 	regen_on = true

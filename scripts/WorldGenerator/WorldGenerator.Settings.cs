@@ -5,7 +5,6 @@ using Godot;
 public partial class WorldGenerator
 {
 	static GridContainer DebugContainer;
-	static Label PerfLabel;
 	static Button RegenButton;
 
 	static DynamicIntVariable Seed;
@@ -31,7 +30,6 @@ public partial class WorldGenerator
 	{
 		DebugContainer = GetNode<GridContainer>("../Interface/Debug/GridContainer");
 
-		PerfLabel = GetNode<Label>("../Interface/Debug/GridContainer/PerfLabel");
 		RegenButton = GetNode<Button>("../Interface/Debug/GridContainer/RegenButton");
 		RegenButton.Pressed += ResetWorld;
 
