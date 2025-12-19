@@ -109,7 +109,7 @@ public partial class WorldGenerator : Node2D
 					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
 				);
 
-				if (GD.Randf() > SanityRestoringSpawnChance)
+				if (Random.Randf() > SanityRestoringSpawnChance)
 					continue;
 
 				if (left == -1 && reft == -1)

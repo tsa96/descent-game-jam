@@ -220,7 +220,13 @@ public partial class WorldGenerator
 			if (BL)
 				return new(2, 3);
 
-			return new(1, 1);
+			float r = Random.Randf();
+			if (r <= 0.5f)
+				return new(1, 1);
+			if (r <= 0.75f)
+				return new(5, 3);
+
+			return new(5, 4);
 		}
 
 		void WriteTileMap(Chunk bigChunk, int chunkDepth)

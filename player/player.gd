@@ -221,7 +221,7 @@ func _on_regen_timeout() -> void:
 	regen_on = true
 
 
-func sanity_gain(damage: int):
+func sanity_gain(damage: float):
 	sanity += damage
 	dash_charged = true
 	regen_on = true
