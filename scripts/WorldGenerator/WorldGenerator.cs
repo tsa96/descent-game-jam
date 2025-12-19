@@ -12,7 +12,7 @@ using Godot;
 // - THE MUNCHER: Cellular automata that eats away at rocks with surrounding air
 //
 // Generation runs on a dedicated .NET taskpool thread as player falls through the
-// world, working with 2D float arrays,// then setting cells on a new, un-parented
+// world, working with 2D float arrays, then setting cells on a new, un-parented
 // TileMapLayer (cell setting is by far the most expensive step). Completed layers
 // are pushed to a queue, where the _process calls on the main thread then attaches
 // the layer to the World scene.
@@ -31,6 +31,11 @@ public partial class WorldGenerator : Node2D
 	const int TileSize = 16;
 	const int MaxMoles = 8;
 
+	const float SanityRestoringSpawnChance = 0.01f;
+	static PackedScene SanityRestoringScene = GD.Load<PackedScene>(
+		"res://entities/sanity_restoring/sanity_restoring.tscn"
+	);
+
 	CharacterBody2D Player;
 
 	int LayerCount = 0;
@@ -41,9 +46,11 @@ public partial class WorldGenerator : Node2D
 	Node2D LayerContainer;
 	static TileSet LayerTileSet;
 	static Vector2 LayerScale;
-	ConcurrentQueue<TileMapLayer> LayerQueue = new();
+	ConcurrentQueue<Layer> LayerQueue = new();
 	CancellationTokenSource LayerThreadCts = new();
-	Dictionary<int, TileMapLayer> Layers = new();
+	Dictionary<int, Layer> Layers = new();
+
+	Node2D EntityContainer;
 
 	static readonly RandomNumberGenerator Random = new();
 	static readonly FastNoiseLite ManglerNoise = new();
@@ -54,6 +61,7 @@ public partial class WorldGenerator : Node2D
 	{
 		Player = GetNode<CharacterBody2D>("Player");
 		LayerContainer = GetNode<Node2D>("TileMapContainer");
+		EntityContainer = GetNode<Node2D>("EntityContainer");
 
 		// Can't access .Scale from tp thread for some reason (but we can with tileset ??)
 		var layerTemplate = GetNode<TileMapLayer>("TileMapTemplateLayer");
@@ -80,11 +88,41 @@ public partial class WorldGenerator : Node2D
 		}
 
 		// Add newly generated layers to scene
-		while (LayerQueue.TryDequeue(out var tileMapLayer))
+		while (LayerQueue.TryDequeue(out Layer layer))
 		{
-			LayerContainer.AddChild(tileMapLayer);
-			tileMapLayer.Position = new Vector2(0, BottomLayer * LayerHeight * TileSize);
-			Layers.Add(BottomLayer, tileMapLayer);
+			LayerContainer.AddChild(layer.TileMapLayer);
+			layer.TileMapLayer.Position = new Vector2(0, BottomLayer * LayerHeight * TileSize);
+			Layers.Add(BottomLayer, layer);
+
+			for (int x = -ChunkHalfWidth; x < ChunkHalfWidth; x++)
+			for (int y = 0; y < LayerHeight; y++)
+			{
+				var coords = new Vector2I(x, y);
+				int cell = layer.TileMapLayer.GetCellSourceId(coords);
+				if (cell != -1)
+					continue;
+
+				int left = layer.TileMapLayer.GetCellSourceId(
+					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.LeftSide)
+				);
+				int reft = layer.TileMapLayer.GetCellSourceId(
+					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
+				);
+
+				if (GD.Randf() > SanityRestoringSpawnChance)
+					continue;
+
+				if (left == -1 && reft == -1)
+					continue;
+
+				var entityInstance = SanityRestoringScene.Instantiate<Node2D>();
+				entityInstance.Position = new Vector2I(
+					coords.X * TileSize,
+					(coords.Y + BottomLayer * LayerHeight) * TileSize
+				);
+				EntityContainer.AddChild(entityInstance);
+			}
+
 			BottomLayer++;
 		}
 
@@ -109,8 +147,10 @@ public partial class WorldGenerator : Node2D
 		foreach (TileMapLayer tml in LayerContainer.GetChildren().OfType<TileMapLayer>())
 			tml.QueueFree();
 
-		Layers.Clear();
+		foreach (Node2D entity in EntityContainer.GetChildren().OfType<Node2D>())
+			entity.QueueFree();
 
+		Layers.Clear();
 		Moles.Clear();
 
 		// Start generating again on next frame to ensure everything is cleaned up
@@ -134,7 +174,7 @@ public partial class WorldGenerator : Node2D
 				ulong startTime = Time.GetTicksMsec();
 
 				Layer layer = Layer.Generate();
-				LayerQueue.Enqueue(layer.TileMapLayer);
+				LayerQueue.Enqueue(layer);
 				RequestedLayers--;
 
 				GD.Print($"Generated layer in {Time.GetTicksMsec() - startTime}ms");
@@ -152,7 +192,7 @@ public partial class WorldGenerator : Node2D
 		// TODO: This won't work on layer boundaries.
 		int top = keys[y / 16];
 		// TODO: wrong, doesn't handle multiple layers
-		TileMapLayer layer = Layers[top];
+		Layer layer = Layers[top];
 		if (layer is null)
 		{
 			GD.PushWarning($"Failed to find TileMapLayer for pos X: ${x}, Y: ${y}");
@@ -172,7 +212,7 @@ public partial class WorldGenerator : Node2D
 			if (nx < 0 || ny < 0 || nx >= ChunkWidth || ny >= ChunkHeight)
 				continue;
 
-			layer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
+			layer.TileMapLayer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
 		}
 	}
 
