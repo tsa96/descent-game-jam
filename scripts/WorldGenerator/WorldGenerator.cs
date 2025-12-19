@@ -31,9 +31,13 @@ public partial class WorldGenerator : Node2D
 	const int TileSize = 16;
 	const int MaxMoles = 8;
 
-	const float SanityRestoringSpawnChance = 0.01f;
+	const float SanityItemSpawnChance = 0.01f;
+	const float SanityRestorePreference = 0.6f;
 	static PackedScene SanityRestoringScene = GD.Load<PackedScene>(
 		"res://entities/sanity_restoring/sanity_restoring.tscn"
+	);
+	static PackedScene SanityDrainingScene = GD.Load<PackedScene>(
+		"res://entities/sanity_draining/sanity_draining.tscn"
 	);
 
 	CharacterBody2D Player;
@@ -109,17 +113,23 @@ public partial class WorldGenerator : Node2D
 					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
 				);
 
-				if (Random.Randf() > SanityRestoringSpawnChance)
+				if (Random.Randf() > SanityItemSpawnChance)
 					continue;
 
 				if (left == -1 && reft == -1)
 					continue;
 
-				var entityInstance = SanityRestoringScene.Instantiate<Node2D>();
+				var entityInstance = Random.Randf() >= SanityRestorePreference ? SanityRestoringScene.Instantiate<Node2D>() : SanityDrainingScene.Instantiate<Node2D>();
 				entityInstance.Position = new Vector2I(
 					coords.X * TileSize,
 					(coords.Y + BottomLayer * LayerHeight) * TileSize
 				);
+				if (left != -1)
+				{
+					var sprite = entityInstance.GetNode<Sprite2D>("Sprite2D");
+					if (sprite != null)
+						sprite.FlipH = true;
+				}
 				EntityContainer.AddChild(entityInstance);
 			}
 
