@@ -164,11 +164,11 @@ scale = Vector2(0.9999983, 0.9999983)
 shape = SubResource("11")
 
 [node name="WallClimbRayLeft" type="RayCast2D" parent="."]
-target_position = Vector2(-64, 0)
+target_position = Vector2(-26, 0)
 collide_with_areas = true
 
 [node name="WallClimbRayRight" type="RayCast2D" parent="."]
-target_position = Vector2(64, 0)
+target_position = Vector2(26, 0)
 collide_with_areas = true
 
 [node name="Regen" type="Timer" parent="."]
