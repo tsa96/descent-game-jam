@@ -8,7 +8,6 @@ extends Area2D
 
 var player_inside: Player = null
 var is_active: bool = false
-var roar_cooldown: float = 10000
 
 func _ready() -> void:
 	main_sprite.modulate.a = 0
@@ -24,16 +23,13 @@ func appear() -> void:
 func unappear() -> void:
 	visible = false
 	is_active = false
-	roar_cooldown = 10000
 
 
 func roar() -> void:
 	roar_audio_emitter.play_one_shot()
-	roar_cooldown = 0
 
 
 func _physics_process(delta: float) -> void:
-	roar_cooldown += delta
 	if not is_active:
 		return
 	
@@ -42,14 +38,14 @@ func _physics_process(delta: float) -> void:
 	
 	print(delta)
 	player_inside.sanity_gain(-2.0)
-	if roar_cooldown > 100:
-		roar()
 
 
 func _on_body_entered(body: Node2D) -> void:
 	var player = (body as Player)
 	if player != null:
 		player_inside = player
+		animator.play("eat", -1, 1.3)
+		roar()
 
 
 func _on_body_exited(body: Node2D) -> void:

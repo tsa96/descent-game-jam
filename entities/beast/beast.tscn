@@ -1,7 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://bc08rouos7uh7"]
+[gd_scene load_steps=18 format=3 uid="uid://bc08rouos7uh7"]
 
 [ext_resource type="Script" uid="uid://bjsshssjuf1e7" path="res://entities/beast/beast.gd" id="1_5r6js"]
-[ext_resource type="Texture2D" uid="uid://c3a1adtqn8xqm" path="res://assets/beast/beast_full.png" id="1_ng3ou"]
+[ext_resource type="Texture2D" uid="uid://b5ycmyu3t5flw" path="res://assets/beast/beast_body.png" id="2_cfrmx"]
+[ext_resource type="Texture2D" uid="uid://dj7mpg10ta1g6" path="res://assets/beast/beast_teeth.png" id="3_sqs55"]
+[ext_resource type="Texture2D" uid="uid://dhxo2qergiebl" path="res://assets/beast/beast_tentacle_01.png" id="4_njpr0"]
+[ext_resource type="Texture2D" uid="uid://cg6f26gqsof6q" path="res://assets/beast/beast_tentacle_02.png" id="5_u36e8"]
+[ext_resource type="Texture2D" uid="uid://be87jeawxmffo" path="res://assets/beast/beast_tentacle_03.png" id="6_ysd26"]
+[ext_resource type="Texture2D" uid="uid://bkkt4iya6im0c" path="res://assets/beast/beast_tentacle_04.png" id="7_almb1"]
+[ext_resource type="Texture2D" uid="uid://dfw3yh35me53m" path="res://assets/beast/beast_tentacle_05.png" id="8_lw4la"]
+[ext_resource type="Texture2D" uid="uid://jo4q7i87rhqh" path="res://assets/beast/beast_tentacle_06.png" id="9_8vvu5"]
+[ext_resource type="Texture2D" uid="uid://b5ix3kyi1q16h" path="res://assets/beast/beast_tentacle_08.png" id="10_3gtxx"]
 
 [sub_resource type="Animation" id="Animation_b3h1i"]
 length = 0.001
@@ -27,7 +35,19 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, 113)]
+"values": [Vector2(0, 75)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D/Teeth:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-6.6666675, 40.952385)]
 }
 
 [sub_resource type="Animation" id="Animation_5r6js"]
@@ -54,13 +74,33 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.93333334),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(0, 90), Vector2(0, 113)]
+"values": [Vector2(0, 50), Vector2(0, 75)]
 }
+
+[sub_resource type="Animation" id="Animation_cfrmx"]
+resource_name = "eat"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D/Teeth:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.5, 0.56666666, 0.6666667, 0.73333335, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-6.6666675, 40.952385), Vector2(-6.667, 30), Vector2(-6.667, 28), Vector2(-6.6666675, 40.952385), Vector2(-6.6666675, 40.952385), Vector2(-6.667, 28), Vector2(-6.6666675, 40.952385)]
+}
+
+[sub_resource type="Animation" id="Animation_sqs55"]
+resource_name = "idle"
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_8gisi"]
 _data = {
 &"RESET": SubResource("Animation_b3h1i"),
-&"appear": SubResource("Animation_5r6js")
+&"appear": SubResource("Animation_5r6js"),
+&"eat": SubResource("Animation_cfrmx"),
+&"idle": SubResource("Animation_sqs55")
 }
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5r6js"]
@@ -98,9 +138,48 @@ libraries = {
 }
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, 113)
+z_index = 1
+position = Vector2(0, 75)
 scale = Vector2(1.05, 1.05)
-texture = ExtResource("1_ng3ou")
+texture = ExtResource("2_cfrmx")
+
+[node name="Teeth" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-6.6666675, 40.952385)
+texture = ExtResource("3_sqs55")
+
+[node name="Tentacle1" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-120, 56.190483)
+texture = ExtResource("4_njpr0")
+
+[node name="Tentacle2" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(123.80954, 64.76191)
+texture = ExtResource("5_u36e8")
+
+[node name="Tentacle3" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-79.04763, 87.61906)
+texture = ExtResource("6_ysd26")
+
+[node name="Tentacle4" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(79.04763, 80.95239)
+texture = ExtResource("7_almb1")
+
+[node name="Tentacle5" type="Sprite2D" parent="Sprite2D"]
+z_as_relative = false
+position = Vector2(-48.57143, 86.66668)
+texture = ExtResource("8_lw4la")
+
+[node name="Tentacle6" type="Sprite2D" parent="Sprite2D"]
+z_as_relative = false
+position = Vector2(56.190483, 89.52382)
+texture = ExtResource("9_8vvu5")
+
+[node name="Tentacle7" type="Sprite2D" parent="Sprite2D"]
+z_as_relative = false
+
+[node name="Tentacle8" type="Sprite2D" parent="Sprite2D"]
+z_as_relative = false
+position = Vector2(-103.80954, 82.857155)
+texture = ExtResource("10_3gtxx")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 70)
