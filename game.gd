@@ -15,14 +15,14 @@ func _ready() -> void:
 	reset()
 
 # The most important var in the game! Controls how long gameplay is generally. Player is 2 units high btw
-const CURVE_MAX_X: float = 12000.0
+const CURVE_MAX_X: float = 30000.0
 
 
 # Curve resource describe how scroll speed and music change over time.
 # Y pos is the scrolling speed, and music intensity increases occur at the 3 rightmost points.
 var game_speed_curve := load("res://game_speed_curve.tres") as Curve
 # Maximum Y position on the curve. Past this point we extrapolate.
-const CURVE_SCROLL_MULT: float = 200.0
+const CURVE_SCROLL_MULT: float = 500.0
 
 var curve_max_y = game_speed_curve.sample(CURVE_MAX_X)
 # TODO: wrongo, probs line equation wrong below. just hardcoding!
@@ -32,7 +32,8 @@ var p2 = game_speed_curve.get_point_position(2)[0]
 var p3 = game_speed_curve.get_point_position(3)[0]
 var posMax = 0
 
-func _process(_delta: float) -> void:
+var last_print = 0
+func _process(delta: float) -> void:
 	var pos = maxf(posMax, player.position.y)
 		
 	var p = pos / CURVE_MAX_X
@@ -40,7 +41,7 @@ func _process(_delta: float) -> void:
 		player.scroll_speed = game_speed_curve.sample(p) * CURVE_SCROLL_MULT
 	else:
 		# y = mx + c type shit
-		player.scroll_speed = (pos - CURVE_MAX_X) * 0.05 + curve_max_y * CURVE_SCROLL_MULT
+		player.scroll_speed = (pos - CURVE_MAX_X) * 0.01 + curve_max_y * CURVE_SCROLL_MULT
 		
 	if !beast.is_active and p > p1:
 		beast.appear()
@@ -56,9 +57,12 @@ func _process(_delta: float) -> void:
 	
 	bgm.set_parameter("Intensity", intensity)
 		
-	print("Scroll Speed: %f, Y Pos: %f, Y Pos / MAX: %f, BGM Intensity %f" % [
-		player.scroll_speed, pos, p, intensity
-	])
+	last_print += delta
+	if (last_print > 1):
+		last_print = 0
+		print("Scroll Speed: %f, Y Pos: %f, Y Pos / MAX: %f, BGM Intensity %f" % [
+			player.scroll_speed, pos, p, intensity
+		])
 
 
 func _unhandled_input(input_event: InputEvent) -> void:
