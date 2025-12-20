@@ -119,7 +119,7 @@ public partial class WorldGenerator
 			if (movedOnlyY)
 			{
 				downwardsCounter++;
-				if (downwardsCounter >= 3)
+				if (downwardsCounter >= 10)
 				{
 					// Force left or right move, biased away from nearest wall
 					if (X < ChunkHalfWidth)

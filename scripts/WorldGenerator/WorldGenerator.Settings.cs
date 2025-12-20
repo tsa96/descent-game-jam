@@ -41,13 +41,13 @@ public partial class WorldGenerator
 		// Looks terrible with parallax bg don't use
 		SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.0f);
 		MoleStartCount = new DynamicIntVariable("Mole Start Count", 1);
-		MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.075f);
+		MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.025f);
 		// Logic for these needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
 		// Always merging seems to work really well though.
 		MoleMergeChance = new DynamicFloatVariable("Mole Merge Chance", 1.0f);
 		// If lower than 3 we can get sections that are very awkward to fit through.
 		// If lowering, decrease muncher neighbour mins.
-		MoleHoleSize = new DynamicIntVariable("Mole Hole Size", 2);
+		MoleHoleSize = new DynamicIntVariable("Mole Hole Size", 3);
 		// Meh, bit useless
 		MoleHoleFalloff = new DynamicFloatVariable("Mole Hole Falloff", 0f);
 		MolePreviousDirMult = new DynamicFloatVariable("Mole Previous Dir Mult", 0.5f);
@@ -65,7 +65,7 @@ public partial class WorldGenerator
 		// relatively low (e.g. 3) and consistently gives us gaps you can fit through comfortably
 		ManglerStrengthMult = new DynamicFloatVariable("Mangler Strength Mult", 3.5f);
 		// More iters smooth out the terrain, but are the main performance hit of the entire generator (currently).
-		MuncherIters = new DynamicIntVariable("Muncher Iterations", 6);
+		MuncherIters = new DynamicIntVariable("Muncher Iterations", 7);
 		// Generally, keep air slightly lower (e.g. 1) than rock.
 		MuncherAirNeighbours = new DynamicIntVariable("Muncher Air Neighbours Min", 4);
 		MuncherRockNeighbours = new DynamicIntVariable("Muncher Rock Neighbours Min", 5);
