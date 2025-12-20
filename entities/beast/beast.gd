@@ -1,4 +1,4 @@
-extends Node2D
+extends Area2D
 
 @onready var appear_audio_emitter := $Audio/MonsterAppearAudioEventEmitter as FmodEventEmitter2D
 @onready var roar_audio_emitter := $Audio/MonsterRoarAudioEventEmitter as FmodEventEmitter2D
@@ -13,14 +13,14 @@ func roar() -> void:
 
 func _physics_process(delta: float) -> void:
 	if player_inside != null:
-		player_inside.sanity_gain(-2.0 * delta)
+		player_inside.sanity_gain(-2.0)
 
-func _on_area_2d_body_entered(body: Node2D) -> void:
+func _on_body_entered(body: Node2D) -> void:
 	var player = (body as Player)
-	if player != player:
+	if player != null:
 		player_inside = player
 
-func _on_area_2d_body_exited(body: Node2D) -> void:
+func _on_body_exited(body: Node2D) -> void:
 	var player = (body as Player)
-	if player != player:
+	if player != null:
 		player_inside = null
