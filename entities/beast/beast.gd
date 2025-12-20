@@ -6,6 +6,10 @@ extends Area2D
 @onready var animator := $AnimationPlayer as AnimationPlayer
 @onready var main_sprite := $Sprite2D as Sprite2D
 
+const EAT_ANIM = "eat_with_idle"
+const APPEAR_ANIM = "appear"
+const IDLE_ANIM = "idle"
+
 var player_inside: Player = null
 var is_active: bool = false
 
@@ -14,7 +18,7 @@ func _ready() -> void:
 
 
 func appear() -> void:
-	animator.play("appear")
+	animator.play(APPEAR_ANIM)
 	appear_audio_emitter.play_one_shot()
 	visible = true
 	is_active = true
@@ -39,12 +43,15 @@ func _physics_process(delta: float) -> void:
 	print(delta)
 	player_inside.sanity_gain(-2.0)
 
+func _process(_delta: float) -> void:
+	if animator.animation_finished and animator.current_animation != EAT_ANIM and animator.current_animation != APPEAR_ANIM:
+		animator.play(IDLE_ANIM)
 
 func _on_body_entered(body: Node2D) -> void:
 	var player = (body as Player)
 	if player != null:
 		player_inside = player
-		animator.play("eat", -1, 1.3)
+		animator.play(EAT_ANIM, -1, 1.3)
 		roar()
 
 
