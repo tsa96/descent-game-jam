@@ -84,6 +84,8 @@ _data = {
 
 [node name="Area" type="Area2D" parent="."]
 position = Vector2(-1.9073486e-06, 0)
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_bljma")
 
 [node name="Sprite2D" type="Sprite2D" parent="Area"]
