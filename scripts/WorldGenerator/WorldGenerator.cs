@@ -96,7 +96,6 @@ public partial class WorldGenerator : Node2D
 		{
 			LayerContainer.AddChild(chunk.TileMapLayer);
 			chunk.TileMapLayer.Position = new Vector2(0, BottomChunk * ChunkHeight * TileSize);
-			Chunks.Add(BottomChunk, chunk);
 			SpawnEntities(chunk);
 			BottomChunk++;
 		}
@@ -186,7 +185,6 @@ public partial class WorldGenerator : Node2D
 		foreach (Node2D entity in EntityContainer.GetChildren().OfType<Node2D>())
 			entity.QueueFree();
 
-		Chunks.Clear();
 		Moles.Clear();
 		LastChunk = null;
 
