@@ -17,7 +17,7 @@ General/banks_path="res://assets/audio/Desktop"
 config/name="Derek's Descent"
 run/main_scene="uid://cd8w4e2fuy82h"
 config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://y8u73yrxf7o"
 config/main_scene="res://title.tscn"
 
 [autoload]
