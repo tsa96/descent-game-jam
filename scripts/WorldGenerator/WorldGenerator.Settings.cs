@@ -37,11 +37,11 @@ public partial class WorldGenerator
 		Seed = new DynamicIntVariable("Seed", 0);
 		// A bit pointless as Mole works best when setting everything to very high strength
 		AirThreshold = new DynamicFloatVariable("Air Threshold", 0.5f);
-		SideMargin = new DynamicIntVariable("Side Margin", 6);
+		SideMargin = new DynamicIntVariable("Side Margin", 2);
 		// Attempting to smooth out the sections where we block off the sides a bit. This is multiplied
 		// by current cell strength * distance from edge * rand. Quick high values look pretty good!
 		SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.85f);
-		MoleStartCount = new DynamicIntVariable("Mole Start Count", 2);
+		MoleStartCount = new DynamicIntVariable("Mole Start Count", 1);
 		MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.075f);
 		// Logic for these needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
 		// Always merging seems to work really well though.
@@ -50,14 +50,14 @@ public partial class WorldGenerator
 		// If lowering, decrease muncher neighbour mins.
 		MoleHoleSize = new DynamicIntVariable("Mole Hole Size", 2);
 		// Meh, bit useless
-		MoleHoleFalloff = new DynamicFloatVariable("Mole Hole Falloff", 0.1f);
-		MolePreviousDirMult = new DynamicFloatVariable("Mole Previous Dir Mult", 0.1f);
+		MoleHoleFalloff = new DynamicFloatVariable("Mole Hole Falloff", 0f);
+		MolePreviousDirMult = new DynamicFloatVariable("Mole Previous Dir Mult", 0.5f);
 		// Disabling this and upping previous dir mult gives extra snakiness but might be a bit much,
 		// normal dist is good at encouraging moles downwards. Seems like mangler noise is just as good
 		// for extra snaking anyway!
 		MoleUseNormalDist = new DynamicBoolVariable("Mole Direction Use Normal Distribution", true);
 		// See https://homepage.divms.uiowa.edu/~mbognar/applets/normal.html to play around with distribution!
-		MoleNormalSigma = new DynamicFloatVariable("Mole Direction Normal Sigma", 1f);
+		MoleNormalSigma = new DynamicFloatVariable("Mole Direction Normal Sigma", 2f);
 		// 5 = Value. Changing to Perlin (3) is decent as well but value with a high frequency
 		// gives nice solid lumps. If using Perlin, up frequency a lot.
 		ManglerNoiseType = new DynamicIntVariable("Mangler Noise Type", 5);
@@ -66,8 +66,7 @@ public partial class WorldGenerator
 		// relatively low (e.g. 3) and consistently gives us gaps you can fit through comfortably
 		ManglerStrengthMult = new DynamicFloatVariable("Mangler Strength Mult", 3.5f);
 		// More iters smooth out the terrain, but are the main performance hit of the entire generator (currently).
-		// Might be able to speed up in the future with small chunks and better cache locality, idk.
-		MuncherIters = new DynamicIntVariable("Muncher Iterations", 7);
+		MuncherIters = new DynamicIntVariable("Muncher Iterations", 6);
 		// Generally, keep air slightly lower (e.g. 1) than rock.
 		MuncherAirNeighbours = new DynamicIntVariable("Muncher Air Neighbours Min", 4);
 		MuncherRockNeighbours = new DynamicIntVariable("Muncher Rock Neighbours Min", 5);
