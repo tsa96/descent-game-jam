@@ -109,6 +109,7 @@ func _process(_delta: float) -> void:
 [sub_resource type="LabelSettings" id="LabelSettings_rvswv"]
 font = ExtResource("18_rvswv")
 font_size = 64
+font_color = Color(0.7607843, 0.7607843, 0.7607843, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j5wjh"]
 shader = ExtResource("6_ryrav")
@@ -128,7 +129,8 @@ shader_parameter/saturation = 1.2
 
 [sub_resource type="LabelSettings" id="LabelSettings_boyg6"]
 font = ExtResource("18_rvswv")
-font_size = 96
+font_size = 82
+font_color = Color(0.7602972, 0.76029724, 0.7602972, 1)
 
 [node name="Game" type="Node"]
 process_mode = 3
@@ -190,6 +192,7 @@ scale = Vector2(2, 2)
 
 [node name="Debug" type="Control" parent="Interface"]
 process_mode = 3
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -261,7 +264,6 @@ offset_right = 18.0
 offset_bottom = 15.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 0.827451)
 text = "Depth: 5"
 label_settings = SubResource("LabelSettings_rvswv")
 
@@ -337,6 +339,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.1254902)
+
+[node name="Label" type="Label" parent="Interface/PauseMenu/BackgroundShader/ColorRect"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 748.0
+offset_right = 715.0
+offset_bottom = 1057.0
+theme_override_colors/font_color = Color(0.8459966, 0.8470053, 0.9992116, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("18_rvswv")
+theme_override_font_sizes/font_size = 48
+text = "W / Space - Jump
+W / Space (Hold) - Wallhang / Walljump
+A - Left
+D - Right
+S - Fast Fall
+Shift - Dash"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Interface/PauseMenu/BackgroundShader/ColorRect"]
 layout_mode = 1
@@ -480,6 +499,8 @@ grow_vertical = 2
 
 [node name="Depth" type="Label" parent="Interface/DeathScreen/BackgroundShader/ColorRect/DepthVBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("18_rvswv")
 text = "Depth: 5"
 label_settings = SubResource("LabelSettings_boyg6")
 horizontal_alignment = 1
