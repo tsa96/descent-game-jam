@@ -24,8 +24,8 @@ public partial class WorldGenerator : Node2D
 	const int ChunkExtraDiff = ChunkHeight - ChunkExtraHeight;
 	const int ChunkBigHeight = ChunkHeight + ChunkExtraHeight * 2;
 	const int ChunkHalfWidth = ChunkWidth / 2;
-	const int InitialLayers = 4;
-	const int ChunksPerLayer = 8;
+	const int InitialLayers = 1;
+	const int ChunksPerLayer = 24;
 	const int LayerHeight = ChunkHeight * ChunksPerLayer;
 	const int LayersFromBottomToTriggerGeneration = 4;
 	const int TileSize = 16;
@@ -39,14 +39,10 @@ public partial class WorldGenerator : Node2D
 	static PackedScene SanityDrainingScene = GD.Load<PackedScene>(
 		"res://entities/sanity_draining/sanity_draining.tscn"
 	);
-	
+
 	const float HallucinationSpawnChance = 0.0001f;
-	static PackedScene Hallucination1Scene = GD.Load<PackedScene>(
-		"res://entities/hallucinations/hallucination.tscn"
-	);
-	static PackedScene Hallucination2Scene = GD.Load<PackedScene>(
-		"res://entities/hallucinations/hallucination2.tscn"
-	);
+	static PackedScene Hallucination1Scene = GD.Load<PackedScene>("res://entities/hallucinations/hallucination.tscn");
+	static PackedScene Hallucination2Scene = GD.Load<PackedScene>("res://entities/hallucinations/hallucination2.tscn");
 
 	CharacterBody2D Player;
 
@@ -126,12 +122,15 @@ public partial class WorldGenerator : Node2D
 				int down = layer.TileMapLayer.GetCellSourceId(
 					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.BottomSide)
 				);
-				
-				var spawnChance = Random.Randf();
+
+				float spawnChance = Random.Randf();
 
 				if ((left != -1 || right != -1) && spawnChance < SanityItemSpawnChance)
 				{
-					var entityInstance = Random.Randf() < SanityRestorePreference ? SanityRestoringScene.Instantiate<Node2D>() : SanityDrainingScene.Instantiate<Node2D>();
+					var entityInstance =
+						Random.Randf() < SanityRestorePreference
+							? SanityRestoringScene.Instantiate<Node2D>()
+							: SanityDrainingScene.Instantiate<Node2D>();
 					entityInstance.Position = new Vector2I(
 						coords.X * TileSize,
 						(coords.Y + BottomLayer * LayerHeight) * TileSize
@@ -145,19 +144,23 @@ public partial class WorldGenerator : Node2D
 					}
 					EntityContainer.AddChild(entityInstance);
 				}
-				else if ((left == -1 && right == -1 && up == -1 && down == -1) && spawnChance < HallucinationSpawnChance)
+				else if (
+					(left == -1 && right == -1 && up == -1 && down == -1)
+					&& spawnChance < HallucinationSpawnChance
+				)
 				{
-					var entityInstance = Random.Randf() < 0.5 ? Hallucination1Scene.Instantiate<Node2D>() : Hallucination2Scene.Instantiate<Node2D>();
+					var entityInstance =
+						Random.Randf() < 0.5
+							? Hallucination1Scene.Instantiate<Node2D>()
+							: Hallucination2Scene.Instantiate<Node2D>();
 					entityInstance.Position = new Vector2I(
 						coords.X * TileSize,
 						(coords.Y + BottomLayer * LayerHeight) * TileSize
 					);
 					var animationPlayer = entityInstance.GetNode<AnimationPlayer>("AnimationPlayer");
-					if (animationPlayer != null)
-						animationPlayer.Play("loop");
+					animationPlayer?.Play("loop");
 					EntityContainer.AddChild(entityInstance);
 				}
-
 			}
 
 			BottomLayer++;
@@ -224,12 +227,9 @@ public partial class WorldGenerator : Node2D
 		int x = ((pos.X / TileSize) + ChunkHalfWidth);
 		int y = (pos.Y + 12) / TileSize;
 
-		var keys = Layers.Keys.ToList();
-		keys.Sort();
 		// TODO: This won't work on layer boundaries.
-		int top = keys[y / 16];
-		// TODO: wrong, doesn't handle multiple layers
-		Layer layer = Layers[top];
+		// Still wrong past first layer!! Maths seems right, don't fuckin know
+		Layer layer = Layers[(pos.Y + 12) / TileSize];
 		if (layer is null)
 		{
 			GD.PushWarning($"Failed to find TileMapLayer for pos X: ${x}, Y: ${y}");
