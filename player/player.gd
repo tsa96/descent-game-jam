@@ -170,18 +170,14 @@ func _physics_process(delta: float) -> void:
 	process_camera(delta)
 
 
-func play_character_audio(delta: float, just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+func play_character_audio(_delta: float, just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
 	if just_dashed:
 		dash_audio_emitter.play_one_shot()
 	
 	if just_landed and prev_fall_speed >= HIGH_LANDING_VELOCITY:
 		land_high_vel_audio_emitter.play_one_shot()
-	elif (is_on_floor() and velocity.x > 0.1) or just_fell or just_landed:
-		if footstep_audio_timer <= 0.0:
-			footstep_audio_emitter.play_one_shot()
-			footstep_audio_timer = FOOTSTEP_AUDIO_TIMER_RESET
-		else:
-			footstep_audio_timer -= delta
+	elif just_landed or just_fell:
+		footstep_audio_emitter.play_one_shot()
 	else:
 		footstep_audio_timer = 0
 
@@ -251,4 +247,12 @@ func sanity_drain(damage: float):
 func _on_player_animator_animation_finished(anim_name: StringName) -> void:
 	if anim_name == DEAD_ANIM:
 		on_death.emit()
-		
+
+func _on_player_death_hit_floor() -> void:
+	land_high_vel_audio_emitter.play_one_shot()
+
+func _on_player_death_tripped() -> void:
+	footstep_audio_emitter.play_one_shot()
+
+func _on_player_footstep() -> void:
+	footstep_audio_emitter.play_one_shot()
