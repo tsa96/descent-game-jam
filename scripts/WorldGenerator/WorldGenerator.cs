@@ -53,7 +53,6 @@ public partial class WorldGenerator : Node2D
 	static Vector2 TileMapScale;
 	ConcurrentQueue<Chunk> ChunkQueue = new();
 	CancellationTokenSource ChunkThreadCts = new();
-	Dictionary<int, Chunk> Chunks = new();
 
 	Node2D EntityContainer;
 

@@ -5,7 +5,7 @@ public partial class WorldGenerator
 {
 	class Mole
 	{
-		public int X { get; set; } = (int)Random.RandiRange(0, ChunkWidth - 1);
+		public int X { get; set; } = Random.RandiRange(0, ChunkWidth - 1);
 		public int Y { get; set; } = 0;
 
 		// 0 is downwards dir, -1 left, 1 right.
@@ -97,23 +97,23 @@ public partial class WorldGenerator
 
 			Dir = newDir + Dir * MolePreviousDirMult.Value;
 			// csharpier-ignore
-        switch (Dir)
-        {
-            case > -1.0f and < -0.5f:
-                X--;
-				movedX = true;
-                Y++;
-                break;
-            case > -0.5f and < 0.5f:
-                Y++;
-                movedOnlyY = true;
-                break;
-            case > 0.5f and < 1.0f:
-                X++;
-				movedX = true;
-                Y++;
-                break;
-        }
+			switch (Dir)
+			{
+				case > -1.0f and < -0.5f:
+					X--;
+					movedX = true;
+					Y++;
+					break;
+				case > -0.5f and < 0.5f:
+					Y++;
+					movedOnlyY = true;
+					break;
+				case > 0.5f and < 1.0f:
+					X++;
+					movedX = true;
+					Y++;
+					break;
+			}
 
 			// Moles should be *heavily* biased to avoid going downwards for long periods of time.
 			if (movedOnlyY)
