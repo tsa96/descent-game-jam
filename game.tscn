@@ -8,14 +8,14 @@
 [ext_resource type="Texture2D" uid="uid://ethhruldn76x" path="res://assets/test_tileset_03.png" id="4_eow3j"]
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 [ext_resource type="PackedScene" uid="uid://bc08rouos7uh7" path="res://entities/beast/beast.tscn" id="5_mfdv2"]
-[ext_resource type="Script" uid="uid://d3kvxmqw08ya4" path="res://ui/sanity.gd" id="6_iotsf"]
+[ext_resource type="Script" path="res://ui/sanity.gd" id="6_iotsf"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="Texture2D" uid="uid://bi620gu5ioskk" path="res://assets/ui/title_paused.png" id="7_mfdv2"]
-[ext_resource type="Script" uid="uid://cdewnfuvv4a1u" path="res://ui/hud.gd" id="8_e8heu"]
+[ext_resource type="Script" path="res://ui/hud.gd" id="8_e8heu"]
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
-[ext_resource type="Script" uid="uid://cgb1adimipocd" path="res://ui/death_screen.gd" id="15_7sc4i"]
+[ext_resource type="Script" path="res://ui/death_screen.gd" id="15_7sc4i"]
 [ext_resource type="Texture2D" uid="uid://dsjw3jfct4kdc" path="res://assets/derek_defeated.png" id="16_80cx4"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="18_rvswv"]
 
@@ -82,6 +82,21 @@ sources/0 = SubResource("TileSetAtlasSource_fc0e3")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_215e1"]
 
+[sub_resource type="GDScript" id="GDScript_7jktm"]
+resource_name = "FPS Counter"
+script/source = "extends Label
+
+@onready var player := $\"../../../World/Player\" as Player
+
+func _process(_delta: float) -> void:
+	set_text(\"FPS %d \\nX: %d \\nY: %d \\nSanity: %d\\n\" % [
+		Engine.get_frames_per_second(),
+		player.position.x,
+		player.position.y,
+		player.sanity
+	])
+"
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_j5wjh"]
 shader = ExtResource("6_ryrav")
 shader_parameter/brightness = 0.8
@@ -101,21 +116,6 @@ shader_parameter/saturation = 1.2
 [sub_resource type="LabelSettings" id="LabelSettings_boyg6"]
 font = ExtResource("18_rvswv")
 font_size = 96
-
-[sub_resource type="GDScript" id="GDScript_7jktm"]
-resource_name = "FPS Counter"
-script/source = "extends Label
-
-@onready var player := $\"../../../World/Player\" as Player
-
-func _process(_delta: float) -> void:
-	set_text(\"FPS %d \\nX: %d \\nY: %d \\nSanity: %d\\n\" % [
-		Engine.get_frames_per_second(),
-		player.position.x,
-		player.position.y,
-		player.sanity
-	])
-"
 
 [node name="Game" type="Node"]
 process_mode = 3
@@ -175,6 +175,42 @@ position = Vector2(240, -588)
 scale = Vector2(2, 2)
 
 [node name="Interface" type="CanvasLayer" parent="."]
+
+[node name="Debug" type="Control" parent="Interface"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="GridContainer" type="GridContainer" parent="Interface/Debug"]
+layout_mode = 1
+offset_right = 468.0
+offset_bottom = 206.0
+columns = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="RegenButton" type="Button" parent="Interface/Debug/GridContainer"]
+layout_mode = 2
+text = "Regenerate
+"
+
+[node name="PerfLabel" type="Label" parent="Interface/Debug/GridContainer"]
+layout_mode = 2
+text = ":)"
+
+[node name="Stats" type="Label" parent="Interface/Debug"]
+layout_direction = 3
+layout_mode = 1
+offset_right = 101.0
+offset_bottom = 23.0
+text = "FPS and stuff"
+horizontal_alignment = 2
+script = SubResource("GDScript_7jktm")
 
 [node name="HUD" type="Control" parent="Interface"]
 layout_mode = 3
@@ -458,47 +494,6 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_j5wjh")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_hve3p")
 icon = ExtResource("10_hve3p")
 icon_alignment = 1
-
-[node name="Debug" type="Control" parent="Interface"]
-process_mode = 3
-visible = false
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -1738.0
-offset_top = -305.0
-offset_right = -1738.0
-offset_bottom = -305.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 6
-size_flags_vertical = 6
-
-[node name="GridContainer" type="GridContainer" parent="Interface/Debug"]
-layout_mode = 1
-offset_right = 468.0
-offset_bottom = 206.0
-columns = 2
-metadata/_edit_use_anchors_ = true
-
-[node name="RegenButton" type="Button" parent="Interface/Debug/GridContainer"]
-layout_mode = 2
-text = "Regenerate
-"
-
-[node name="PerfLabel" type="Label" parent="Interface/Debug/GridContainer"]
-layout_mode = 2
-text = ":)"
-
-[node name="Stats" type="Label" parent="Interface/Debug"]
-layout_direction = 3
-layout_mode = 1
-offset_right = 101.0
-offset_bottom = 23.0
-text = "FPS and stuff"
-horizontal_alignment = 2
-script = SubResource("GDScript_7jktm")
 
 [node name="InterfaceAudioPlayer" type="AudioStreamPlayer2D" parent="Interface"]
 process_mode = 3

@@ -67,6 +67,7 @@ func _unhandled_input(input_event: InputEvent) -> void:
 	
 	elif input_event.is_action_pressed(&"toggle_devui"):
 		debug_ui.visible = !debug_ui.visible
+		get_tree().root.set_input_as_handled()
 	
 
 # Completely reset game state. Bye!
