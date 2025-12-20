@@ -48,6 +48,9 @@ var dead: bool = false
 @onready var footstep_audio_emitter := $Audio/FootstepAudioEventEmitter as FmodEventEmitter2D
 @onready var land_high_vel_audio_emitter := $Audio/LandHighVelocityAudioEventEmitter as FmodEventEmitter2D
 @onready var dash_audio_emitter := $Audio/DashAudioEventEmitter as FmodEventEmitter2D
+@onready var death_audio_emitter := $Audio/DeathAudioEventEmitter as FmodEventEmitter2D
+@onready var eating_audio_emitter := $Audio/EatingAudioEventEmitter as FmodEventEmitter2D
+@onready var eating_psyc_audio_emitter := $Audio/EatingPsycAudioEventEmitter as FmodEventEmitter2D
 
 signal on_reset()
 signal on_start_death()
@@ -133,7 +136,7 @@ func _physics_process(delta: float) -> void:
 	var just_landed := not was_on_ground and is_on_floor() as bool
 	var just_fell := was_on_ground and not is_on_floor() as bool
 	
-	play_character_audio(delta, just_dashed, just_fell, just_landed, prev_fall_speed)
+	play_character_audio(just_dashed, just_fell, just_landed, prev_fall_speed)
 	play_animation(direction, just_dashed, just_landed)
 	
 	# TODO: Make proportional to fall speed, decreases sanity
@@ -165,12 +168,17 @@ func _physics_process(delta: float) -> void:
 	if sanity <= 0:
 		dead = true
 		play_animation(direction, false, false)
+		play_character_audio(false, false, false)
 		on_start_death.emit()
 
 	process_camera(delta)
 
 
-func play_character_audio(_delta: float, just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+func play_character_audio(just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
+	if dead:
+		death_audio_emitter.play_one_shot()
+		return
+	
 	if just_dashed:
 		dash_audio_emitter.play_one_shot()
 	
@@ -243,6 +251,12 @@ func sanity_gain(damage: float):
 
 func sanity_drain(damage: float):
 	sanity -= damage
+
+func mushie_eaten(good: bool):
+	if good:
+		eating_audio_emitter.play_one_shot()
+	else:
+		eating_psyc_audio_emitter.play_one_shot()
 
 func _on_player_animator_animation_finished(anim_name: StringName) -> void:
 	if anim_name == DEAD_ANIM:

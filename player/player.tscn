@@ -251,5 +251,21 @@ event_name = "event:/Dash"
 event_guid = "{8a569a89-1715-42f5-b1ae-0dca887adc05}"
 volume = 0.5
 
+[node name="DeathAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/Death"
+event_guid = "{1aac84a0-a59a-4109-be8d-2bd86edc860c}"
+volume = 0.4
+
+[node name="EatingAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/Eat"
+event_guid = "{bb4b6e51-c05f-49ac-984f-5ad326947f2a}"
+volume = 0.4
+
+[node name="EatingPsycAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/EatPsyc"
+event_guid = "{4f549c6a-368f-4dee-9ee0-f7085191835b}"
+volume = 0.4
+scale = Vector2(0.99999994, 0.99999994)
+
 [connection signal="animation_finished" from="PlayerAnimator" to="." method="_on_player_animator_animation_finished"]
 [connection signal="timeout" from="Regen" to="." method="_on_regen_timeout"]
