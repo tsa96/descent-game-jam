@@ -112,6 +112,6 @@ bank_paths = ["res://assets/audio/Desktop/Enemies.bank", "res://assets/audio/Des
 [node name="HallucinationAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
 event_name = "event:/HallucinationScream"
 event_guid = "{87ff95f2-b1b1-4064-8e7a-05954e4d7276}"
-volume = 0.7
+volume = 0.9
 
 [connection signal="body_entered" from="Area" to="Area" method="_on_body_entered"]

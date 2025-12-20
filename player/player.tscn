@@ -36,7 +36,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_8t03j"]
 resource_name = "death"
-length = 1.4
+length = 2.2
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -270,7 +270,7 @@ scale = Vector2(0.99999994, 0.99999994)
 [node name="DeathFinishAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
 event_name = "event:/DeathFinish"
 event_guid = "{2e490b57-3f5c-4b5a-bef6-9369c976365c}"
-volume = 0.4
+volume = 0.3
 scale = Vector2(0.99999976, 0.99999976)
 
 [connection signal="animation_finished" from="PlayerAnimator" to="." method="_on_player_animator_animation_finished"]
