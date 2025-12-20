@@ -9,6 +9,7 @@ const START_POS =  Vector2(-30 * 8, -32);
 const WALK_SPEED = 240.0
 const WALK_ACCEL = WALK_SPEED * 6.0
 const DASH_SPEED = 700.0
+const DASH_SANITY_DRAIN = 700.0
 const JUMP_VELOCITY = -525.0
 const SMALL_JUMP_MULT = 0.4
 const TERMINAL_VELOCITY = 500.0
@@ -21,6 +22,8 @@ const WALL_JUMP_MAX_SPEED = 250
 const FOOTSTEP_AUDIO_TIMER_RESET = .3
 const HIGH_LANDING_VELOCITY = 400.0
 const COYOTE_TIME = 0.1
+const TERMINAL_VELOCITY_SANITY_DRAIN = 0.125
+const FAST_FALL_SANITY_DRAIN = 0.0002
 
 const IDLE_ANIM = "idle"
 const WALK_ANIM = "walk"
@@ -130,7 +133,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("dash") and dash_charged and direction != 0:
 		velocity.x = direction * DASH_SPEED
 		dash_charged = false
-		sanity -= 15
+		sanity -= DASH_SANITY_DRAIN
 		regen_on = false
 		just_dashed = true
 		$Regen.start()
@@ -160,13 +163,13 @@ func _physics_process(delta: float) -> void:
 	
 	# If you are falling at terminal velocity, sanity will go down
 	if velocity.y == TERMINAL_VELOCITY:
-		sanity -= 0.25
+		sanity -= TERMINAL_VELOCITY_SANITY_DRAIN
 		regen_on = false
 		$Regen.start()
 	
 	# The same but if you're falling faster it'll go down faster
 	if velocity.y > TERMINAL_VELOCITY:
-		sanity -= velocity.y * 0.0005
+		sanity -= velocity.y * FAST_FALL_SANITY_DRAIN
 		regen_on = false
 		$Regen.start()
 	
@@ -178,6 +181,9 @@ func _physics_process(delta: float) -> void:
 		on_start_death.emit()
 
 	sticky.position.y = maxf(position.y, sticky.position.y + scroll_speed * delta)
+	
+	# Fuck you, stop falling off
+	position.x = clamp(position.x, -33 * 8, 33 * 8)
 
 
 func play_character_audio(just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
