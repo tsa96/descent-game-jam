@@ -1,10 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://cd8w4e2fuy82h"]
+[gd_scene load_steps=15 format=3 uid="uid://cd8w4e2fuy82h"]
 
 [ext_resource type="Script" uid="uid://be61ibbjaoe4q" path="res://ui/title.gd" id="1_7lgly"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="2_mom7w"]
 [ext_resource type="Texture2D" uid="uid://cqq871vptiy67" path="res://assets/ui/buttons/start.png" id="3_7lgly"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="4_0824t"]
 [ext_resource type="Texture2D" uid="uid://clihudg0a3lfv" path="res://assets/ui/title_sheet.png" id="5_mom7w"]
+[ext_resource type="Texture2D" uid="uid://bttn3uj16wxg7" path="res://fmod-logo.svg" id="5_wsk5t"]
 
 [sub_resource type="Theme" id="Theme_nuqgq"]
 
@@ -119,6 +120,22 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_16uvt")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_upcoo")
 icon = ExtResource("4_0824t")
 icon_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="Control/BG"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -269.0
+offset_top = -85.0
+offset_right = -137.0
+offset_bottom = -45.0
+grow_horizontal = 0
+grow_vertical = 0
+scale = Vector2(2, 2)
+texture = ExtResource("5_wsk5t")
 
 [node name="Title" type="Sprite2D" parent="."]
 position = Vector2(952, 420)
