@@ -160,7 +160,6 @@ collision_mask = 3
 
 [node name="TileMapTemplateLayer" type="TileMapLayer" parent="World"]
 scale = Vector2(2, 2)
-tile_map_data = PackedByteArray("AADb/+z/AAAAAAAAAADd/+z/AAAAAAAAAADe/+z/AAAAAAAAAADf/+z/AAAAAAAAAADd/+3/AAAAAAAAAADd/+7/AAAAAAAAAADd/+//AAAAAAAAAADd//D/AAAAAAAAAADe//D/AAAAAAAAAADf//D/AAAAAAAAAADe/+7/AAAAAAAAAADf/+7/AAAAAAAAAADh/+z/AAAAAAAAAADh/+3/AAAAAAAAAADh/+7/AAAAAAAAAADh/+//AAAAAAAAAADh//D/AAAAAAAAAADi//D/AAAAAAAAAADk/+z/AAAAAAAAAADk/+3/AAAAAAAAAADk/+7/AAAAAAAAAADk/+//AAAAAAAAAADk//D/AAAAAAAAAADl//D/AAAAAAAAAADn/+z/AAAAAAAAAADn/+3/AAAAAAAAAADn/+7/AAAAAAAAAADn/+//AAAAAAAAAADn//D/AAAAAAAAAADo//D/AAAAAAAAAADp//D/AAAAAAAAAADp/+//AAAAAAAAAADp/+7/AAAAAAAAAADp/+3/AAAAAAAAAADp/+z/AAAAAAAAAADo/+z/AAAAAAAAAADz//T/AAAAAAAAAAD0//P/AAAAAAAAAADo/+f/AAAAAAAAAADg/+n/AAAAAAAAAADZ/+3/AAAAAAAAAADZ/+7/AAAAAAAAAADZ/+//AAAAAAAAAADZ//D/AAAAAAAAAADa/+7/AAAAAAAAAADb/+3/AAAAAAAAAADb/+7/AAAAAAAAAADb/+//AAAAAAAAAADb//D/AAAAAAAAAADi//P/AAADAAMAAADj//P/AAADAAMAAADk//P/AAADAAMAAADi//T/AAADAAQAAADj//T/AAADAAQAAADk//T/AAADAAQAAADk//X/AAADAAUAAADj//X/AAADAAUAAADi//X/AAADAAUAAAA=")
 tile_set = SubResource("TileSet_7jktm")
 
 [node name="EntityContainer" type="Node2D" parent="World"]
@@ -185,7 +184,6 @@ scale = Vector2(2, 2)
 
 [node name="Debug" type="Control" parent="Interface"]
 process_mode = 3
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -227,6 +225,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("8_e8heu")
 
 [node name="Depth" type="Control" parent="Interface/HUD"]
@@ -295,7 +294,6 @@ texture = ExtResource("12_x5p1p")
 
 [node name="PauseMenu" type="Control" parent="Interface"]
 process_mode = 3
-visible = false
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -419,7 +417,6 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.5019608)
 
 [node name="DeathScreen" type="Control" parent="Interface"]
-visible = false
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -532,12 +529,10 @@ process_mode = 3
 bank_paths = ["res://assets/audio/Desktop/UI.bank", "res://assets/audio/Desktop/Master.bank"]
 
 [node name="UISelectEventEmitter" type="FmodEventEmitter2D" parent="Interface"]
-event_name = "event:/UI_Select"
 event_guid = "{3c3b1f7c-5f7b-4618-a5a8-d670c45fedd5}"
 volume = 0.3
 
 [node name="UIResetEventEmitter" type="FmodEventEmitter2D" parent="Interface"]
-event_name = "event:/UI_Reset"
 event_guid = "{d48b853b-7348-4d58-8e74-6a268df7f70a}"
 volume = 0.3
 

@@ -59,7 +59,7 @@ bank_paths = ["res://assets/audio/Desktop/Enemies.bank", "res://assets/audio/Des
 [node name="MonsterRoarAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
 event_name = "event:/MonsterRoar"
 event_guid = "{e88eaee5-36e9-40e3-a06c-75b0ee6dcceb}"
-volume = 0.5
+volume = 2.0
 
 [node name="MonsterAppearAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
 event_name = "event:/MonsterAppear"
