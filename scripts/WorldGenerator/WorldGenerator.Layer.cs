@@ -237,10 +237,24 @@ public partial class WorldGenerator
 				if (strength >= AirThreshold.Value)
 					continue;
 
+				Vector2I atlasCoords;
+				if (x is 0 or ChunkWidth - 1)
+				{
+					atlasCoords = new Vector2I(5, 1);
+				}
+				else if (x is 1 or ChunkWidth - 2)
+				{
+					atlasCoords = new Vector2I(5, 0);
+				}
+				else
+				{
+					atlasCoords = GetAtlasCoords(bigChunk, x, y);
+				}
+
 				TileMapLayer.SetCell(
 					new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
 					0,
-					GetAtlasCoords(bigChunk, x, y)
+					atlasCoords
 				);
 			}
 		}

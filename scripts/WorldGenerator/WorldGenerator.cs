@@ -18,7 +18,7 @@ using Godot;
 // the layer to the World scene.
 public partial class WorldGenerator : Node2D
 {
-	const int ChunkWidth = 32;
+	const int ChunkWidth = 36;
 	const int ChunkHeight = 32;
 	const int ChunkExtraHeight = 8;
 	const int ChunkExtraDiff = ChunkHeight - ChunkExtraHeight;
