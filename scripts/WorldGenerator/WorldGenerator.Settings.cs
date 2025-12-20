@@ -38,9 +38,8 @@ public partial class WorldGenerator
 		// A bit pointless as Mole works best when setting everything to very high strength
 		AirThreshold = new DynamicFloatVariable("Air Threshold", 0.5f);
 		SideMargin = new DynamicIntVariable("Side Margin", 4);
-		// Attempting to smooth out the sections where we block off the sides a bit. This is multiplied
-		// by current cell strength * distance from edge * rand. Quick high values look pretty good!
-		SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.85f);
+		// Looks terrible with parallax bg don't use
+		SideMarginFadeFactor = new DynamicFloatVariable("Side Margin Fade Factor", 0.0f);
 		MoleStartCount = new DynamicIntVariable("Mole Start Count", 1);
 		MoleSpawnChance = new DynamicFloatVariable("Mole Spawn Chance", 0.075f);
 		// Logic for these needs more work for < 1 chance to work well, might be able to perform check earlier in iter?
