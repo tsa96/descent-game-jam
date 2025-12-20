@@ -83,7 +83,7 @@ func _on_player_on_reset() -> void:
 func _on_player_on_death() -> void:
 	var tree := get_tree()
 	tree.paused = true
-	death_screen.open()
+	death_screen.open(player.position.y)
 	get_tree().root.set_input_as_handled()
 
 func _on_player_on_start_death() -> void:

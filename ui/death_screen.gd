@@ -1,6 +1,7 @@
 class_name DeathScreen
 extends Control
 
+@onready var depth_label := $BackgroundShader/ColorRect/DepthVBoxContainer/Depth as Label
 @onready var bgm := get_parent().get_parent().get_node("Audio/BGMEventEmitter") as FmodEventEmitter2D
 
 func _ready() -> void:
@@ -11,7 +12,8 @@ func close() -> void:
 	get_tree().paused = false
 	hide()
 
-func open() -> void:
+func open(depth_reached: float) -> void:
+	depth_label.text = "Depth: %d" % depth_reached
 	show()
 	bgm.set_parameter("Paused", 1)
 
