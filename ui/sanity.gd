@@ -1,8 +1,8 @@
 extends Control
 
 @onready var player := $"../../../World/Player" as Player
-@onready var bar_inner := $BarOuter/BarInner
-@onready var amount := $BarOuter/Amount
+@onready var bar_inner := $HBoxContainer/BarOuter/BarInner
+@onready var amount := $HBoxContainer/BarOuter/Amount
 @onready var max_size = bar_inner.size
 
 func _process(_delta: float) -> void:
