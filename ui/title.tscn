@@ -1,6 +1,6 @@
-[gd_scene load_steps=14 format=3 uid="uid://m15t7pvc5tol"]
+[gd_scene load_steps=14 format=3 uid="uid://cd8w4e2fuy82h"]
 
-[ext_resource type="Script" uid="uid://be61ibbjaoe4q" path="res://title.gd" id="1_7lgly"]
+[ext_resource type="Script" uid="uid://be61ibbjaoe4q" path="res://ui/title.gd" id="1_7lgly"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="2_mom7w"]
 [ext_resource type="Texture2D" uid="uid://cqq871vptiy67" path="res://assets/ui/buttons/start.png" id="3_7lgly"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="4_0824t"]
@@ -16,6 +16,21 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_upcoo"]
 
+[sub_resource type="Animation" id="Animation_7lgly"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Title:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
 [sub_resource type="Animation" id="Animation_mom7w"]
 resource_name = "droop"
 length = 3.0
@@ -30,21 +45,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-}
-
-[sub_resource type="Animation" id="Animation_7lgly"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Title:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0824t"]
@@ -82,9 +82,8 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -160.5
-offset_top = -144.0
 offset_right = 160.5
-offset_bottom = 144.0
+offset_bottom = 287.99963
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -122,7 +121,7 @@ icon = ExtResource("4_0824t")
 icon_alignment = 1
 
 [node name="Title" type="Sprite2D" parent="."]
-position = Vector2(952, 300)
+position = Vector2(952, 420)
 texture = ExtResource("5_mom7w")
 hframes = 10
 
