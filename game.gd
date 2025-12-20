@@ -22,10 +22,11 @@ const CURVE_MAX_X: float = 30000.0
 # Y pos is the scrolling speed, and music intensity increases occur at the 3 rightmost points.
 var game_speed_curve := load("res://game_speed_curve.tres") as Curve
 # Maximum Y position on the curve. Past this point we extrapolate.
-const CURVE_SCROLL_MULT: float = 500.0
+const CURVE_SCROLL_MULT: float = 400.0
+const CURVE_END_GRADIENT: float = 0.005
 
 var curve_max_y = game_speed_curve.sample(CURVE_MAX_X)
-# TODO: wrongo, probs line equation wrong below. just hardcoding!
+# TODO: wrongo, probs line equation wrong below. just hardcoding (above)!
 # var curve_gradient = (curve_max_y - game_speed_curve.sample(0.95)) / (1 - 0.95)
 var p1 = game_speed_curve.get_point_position(1)[0]
 var p2 = game_speed_curve.get_point_position(2)[0]
@@ -41,7 +42,7 @@ func _process(delta: float) -> void:
 		player.scroll_speed = game_speed_curve.sample(p) * CURVE_SCROLL_MULT
 	else:
 		# y = mx + c type shit
-		player.scroll_speed = (pos - CURVE_MAX_X) * 0.01 + curve_max_y * CURVE_SCROLL_MULT
+		player.scroll_speed = (pos - CURVE_MAX_X) * CURVE_END_GRADIENT + curve_max_y * CURVE_SCROLL_MULT
 		
 	if !beast.is_active and p > p1:
 		beast.appear()
