@@ -241,37 +241,6 @@ public partial class WorldGenerator : Node2D
 		}
 	}
 
-	void DestroyBlocks(Vector2I pos, int strength)
-	{
-		int x = ((pos.X / TileSize) + ChunkHalfWidth);
-		int y = (pos.Y + 12) / TileSize;
-
-		// TODO: This won't work on chunk boundaries.
-		// Still wrong past first chunk!! Maths seems right, don't fuckin know
-		Chunk chunk = Chunks[(pos.Y + 12) / TileSize];
-		if (chunk is null)
-		{
-			GD.PushWarning($"Failed to find TileMapLayer for pos X: ${x}, Y: ${y}");
-			return;
-		}
-
-		// Erase cells in circle of radius `strength`
-		int strengthSq = strength * strength;
-		for (int dx = -strength; dx <= strength; dx++)
-		for (int dy = -strength; dy <= strength; dy++)
-		{
-			if (dx * dx + dy * dy > strengthSq)
-				continue;
-
-			int nx = x + dx;
-			int ny = y + dy;
-			if (nx < 0 || ny < 0 || nx >= ChunkWidth || ny >= ChunkHeight)
-				continue;
-
-			chunk.TileMapLayer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
-		}
-	}
-
 	protected override void Dispose(bool disposing)
 	{
 		ChunkThreadCts.Cancel();
