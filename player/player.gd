@@ -56,6 +56,7 @@ var coyote_timer: float
 @onready var death_audio_emitter := $Audio/DeathAudioEventEmitter as FmodEventEmitter2D
 @onready var eating_audio_emitter := $Audio/EatingAudioEventEmitter as FmodEventEmitter2D
 @onready var eating_psyc_audio_emitter := $Audio/EatingPsycAudioEventEmitter as FmodEventEmitter2D
+@onready var death_finish_audio_emitter := $Audio/DeathFinishAudioEventEmitter as FmodEventEmitter2D
 
 signal on_reset()
 signal on_start_death()
@@ -266,6 +267,7 @@ func mushie_eaten(good: bool):
 
 func _on_player_animator_animation_finished(anim_name: StringName) -> void:
 	if anim_name == DEAD_ANIM:
+		death_finish_audio_emitter.play_one_shot()
 		on_death.emit()
 
 

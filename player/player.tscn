@@ -267,5 +267,11 @@ event_guid = "{4f549c6a-368f-4dee-9ee0-f7085191835b}"
 volume = 0.4
 scale = Vector2(0.99999994, 0.99999994)
 
+[node name="DeathFinishAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/DeathFinish"
+event_guid = "{2e490b57-3f5c-4b5a-bef6-9369c976365c}"
+volume = 0.4
+scale = Vector2(0.99999976, 0.99999976)
+
 [connection signal="animation_finished" from="PlayerAnimator" to="." method="_on_player_animator_animation_finished"]
 [connection signal="timeout" from="Regen" to="." method="_on_regen_timeout"]
