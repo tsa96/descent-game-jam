@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=4 uid="uid://d2usby77vaxdw"]
+[gd_scene load_steps=34 format=4 uid="uid://d2usby77vaxdw"]
 
 [ext_resource type="Script" uid="uid://dwr76pv0h64p6" path="res://scripts/WorldGenerator/WorldGenerator.cs" id="1_fc0e3"]
 [ext_resource type="Script" uid="uid://d158jerodttux" path="res://game.gd" id="1_hve3p"]
@@ -8,13 +8,16 @@
 [ext_resource type="Texture2D" uid="uid://ethhruldn76x" path="res://assets/test_tileset_03.png" id="4_eow3j"]
 [ext_resource type="Script" uid="uid://cjd2wi5dorb3y" path="res://ui/pause_menu.gd" id="5_7jktm"]
 [ext_resource type="PackedScene" uid="uid://bc08rouos7uh7" path="res://entities/beast/beast.tscn" id="5_mfdv2"]
-[ext_resource type="Script" uid="uid://d3kvxmqw08ya4" path="res://ui/sanity.gd" id="6_iotsf"]
 [ext_resource type="Shader" uid="uid://bb34nlbxidynk" path="res://shaders/pause_background.gdshader" id="6_ryrav"]
 [ext_resource type="Texture2D" uid="uid://bi620gu5ioskk" path="res://assets/ui/title_paused.png" id="7_mfdv2"]
 [ext_resource type="Script" uid="uid://cdewnfuvv4a1u" path="res://ui/hud.gd" id="8_e8heu"]
 [ext_resource type="Texture2D" uid="uid://dj64ys8eeoys0" path="res://assets/ui/buttons/resume.png" id="8_j5wjh"]
 [ext_resource type="Texture2D" uid="uid://dhle5komfnl4i" path="res://assets/ui/buttons/restart.png" id="9_vef74"]
 [ext_resource type="Texture2D" uid="uid://b5p7o8gaxnxwp" path="res://assets/ui/buttons/quit.png" id="10_hve3p"]
+[ext_resource type="Texture2D" uid="uid://dup7fplirss72" path="res://assets/meter/meter_back.png" id="11_hb5m1"]
+[ext_resource type="Script" uid="uid://dy12fqxbquqt3" path="res://ui/sanity_new.gd" id="11_x5p1p"]
+[ext_resource type="Texture2D" uid="uid://dgxkxfw0pogkx" path="res://assets/meter/meter_front.png" id="12_x5p1p"]
+[ext_resource type="Texture2D" uid="uid://k2538562gmi1" path="res://assets/meter/meter_goobar.png" id="13_qhcbd"]
 [ext_resource type="Script" uid="uid://cgb1adimipocd" path="res://ui/death_screen.gd" id="15_7sc4i"]
 [ext_resource type="Texture2D" uid="uid://dsjw3jfct4kdc" path="res://assets/derek_defeated.png" id="16_80cx4"]
 [ext_resource type="FontFile" uid="uid://by5txi2ov3w18" path="res://fonts/Jacquard_24/Jacquard24-Regular.ttf" id="18_rvswv"]
@@ -96,14 +99,6 @@ func _process(_delta: float) -> void:
 		player.sanity
 	])
 "
-
-[sub_resource type="LabelSettings" id="LabelSettings_e36ub"]
-font = ExtResource("18_rvswv")
-font_size = 32
-
-[sub_resource type="LabelSettings" id="LabelSettings_hb5m1"]
-font = ExtResource("18_rvswv")
-font_size = 32
 
 [sub_resource type="LabelSettings" id="LabelSettings_rvswv"]
 font = ExtResource("18_rvswv")
@@ -234,64 +229,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("8_e8heu")
 
-[node name="Sanity" type="Control" parent="Interface/HUD"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-grow_vertical = 0
-script = ExtResource("6_iotsf")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Interface/HUD/Sanity"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -48.0
-offset_right = 482.0
-grow_vertical = 0
-
-[node name="Label" type="Label" parent="Interface/HUD/Sanity/HBoxContainer"]
-layout_mode = 2
-text = "Sanity"
-label_settings = SubResource("LabelSettings_e36ub")
-
-[node name="BarOuter" type="ColorRect" parent="Interface/HUD/Sanity/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="BarInner" type="ColorRect" parent="Interface/HUD/Sanity/HBoxContainer/BarOuter"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -196.0
-offset_top = -20.0
-offset_right = 196.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.9425624, 0, 0.23565996, 1)
-
-[node name="Amount" type="Label" parent="Interface/HUD/Sanity/HBoxContainer/BarOuter"]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -83.0
-offset_top = -17.0
-offset_right = -8.0
-offset_bottom = 16.0
-grow_horizontal = 0
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.035065178, 0.94504756, 0, 1)
-text = "Sanity"
-label_settings = SubResource("LabelSettings_hb5m1")
-
 [node name="Depth" type="Control" parent="Interface/HUD"]
 layout_mode = 1
 anchors_preset = 3
@@ -321,6 +258,40 @@ grow_horizontal = 0
 grow_vertical = 0
 text = "Depth: 5"
 label_settings = SubResource("LabelSettings_rvswv")
+
+[node name="SanitySprites" type="Node2D" parent="Interface/HUD"]
+position = Vector2(57, 1016)
+script = ExtResource("11_x5p1p")
+
+[node name="Back" type="Sprite2D" parent="Interface/HUD/SanitySprites"]
+scale = Vector2(2, 2)
+texture = ExtResource("11_hb5m1")
+
+[node name="BarMask" type="ColorRect" parent="Interface/HUD/SanitySprites"]
+clip_children = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 52.0
+offset_right = 148.0
+offset_bottom = 132.0
+grow_horizontal = 2
+grow_vertical = 0
+rotation = 3.1415927
+color = Color(0, 0, 0, 1)
+
+[node name="Bar" type="Sprite2D" parent="Interface/HUD/SanitySprites/BarMask"]
+position = Vector2(52, 52)
+rotation = 3.1415927
+scale = Vector2(2, 2)
+texture = ExtResource("13_qhcbd")
+
+[node name="Front" type="Sprite2D" parent="Interface/HUD/SanitySprites"]
+scale = Vector2(2, 2)
+texture = ExtResource("12_x5p1p")
 
 [node name="PauseMenu" type="Control" parent="Interface"]
 process_mode = 3
