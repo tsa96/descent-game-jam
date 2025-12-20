@@ -38,7 +38,7 @@ public partial class WorldGenerator : Node2D
 		"res://entities/sanity_draining/sanity_draining.tscn"
 	);
 
-	const float HallucinationSpawnChance = 0.00025f;
+	const float HallucinationSpawnChance = 0.00125f;
 	static PackedScene Hallucination1Scene = GD.Load<PackedScene>("res://entities/hallucinations/hallucination.tscn");
 	static PackedScene Hallucination2Scene = GD.Load<PackedScene>("res://entities/hallucinations/hallucination2.tscn");
 
