@@ -237,12 +237,21 @@ public partial class WorldGenerator
 				if (strength >= AirThreshold.Value)
 					continue;
 
+				// lmao
 				Vector2I atlasCoords;
 				if (x is 0 or ChunkWidth - 1)
 				{
-					atlasCoords = new Vector2I(5, 1);
+					atlasCoords = new Vector2I(4, 1);
 				}
 				else if (x is 1 or ChunkWidth - 2)
+				{
+					atlasCoords = new Vector2I(4, 0);
+				}
+				else if (x is 2 or ChunkWidth - 3)
+				{
+					atlasCoords = new Vector2I(5, 1);
+				}
+				else if (x is 3 or ChunkWidth - 4)
 				{
 					atlasCoords = new Vector2I(5, 0);
 				}
