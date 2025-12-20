@@ -149,5 +149,13 @@ fmod_parameters/Paused/variant_type = 3
 
 [node name="FmodListener2D" type="FmodListener2D" parent="Audio"]
 
+[node name="UIBankLoader" type="FmodBankLoader" parent="Audio"]
+bank_paths = ["res://assets/audio/Desktop/UI.bank", "res://assets/audio/Desktop/Master.bank"]
+
+[node name="UISelectEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/UI_Select"
+event_guid = "{3c3b1f7c-5f7b-4618-a5a8-d670c45fedd5}"
+volume = 0.3
+
 [connection signal="pressed" from="Control/BG/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="Control/BG/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

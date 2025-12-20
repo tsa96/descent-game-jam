@@ -3,6 +3,7 @@ extends Control
 
 @onready var depth_label := $BackgroundShader/ColorRect/DepthVBoxContainer/Depth as Label
 @onready var bgm := get_parent().get_parent().get_node("Audio/BGMEventEmitter") as FmodEventEmitter2D
+@onready var select_audio := get_parent().get_node("UISelectEventEmitter") as FmodEventEmitter2D
 
 func _ready() -> void:
 	hide()
@@ -19,4 +20,5 @@ func open(depth_reached: float) -> void:
 
 func _on_quit_button_pressed() -> void:
 	if visible:
+		select_audio.play_one_shot()
 		get_tree().quit()

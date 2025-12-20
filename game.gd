@@ -9,6 +9,7 @@ extends Node
 @onready var hud := $Interface/HUD as HUD
 @onready var debug_ui := $Interface/Debug
 @onready var bgm := $Audio/BGMEventEmitter as FmodEventEmitter2D
+@onready var ui_reset_audio := $Interface/UIResetEventEmitter
 
 
 # Curve resource describe how scroll speed and music change over time.
@@ -77,6 +78,7 @@ func reset() -> void:
 	death_screen.close()
 	pause_menu.close()
 	hud.show()
+	ui_reset_audio.play_one_shot()
 
 func _on_player_on_reset() -> void:
 	world.ResetWorld()

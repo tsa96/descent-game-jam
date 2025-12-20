@@ -557,6 +557,19 @@ icon_alignment = 1
 [node name="InterfaceAudioPlayer" type="AudioStreamPlayer2D" parent="Interface"]
 process_mode = 3
 
+[node name="UIBankLoader" type="FmodBankLoader" parent="Interface"]
+bank_paths = ["res://assets/audio/Desktop/UI.bank", "res://assets/audio/Desktop/Master.bank"]
+
+[node name="UISelectEventEmitter" type="FmodEventEmitter2D" parent="Interface"]
+event_name = "event:/UI_Select"
+event_guid = "{3c3b1f7c-5f7b-4618-a5a8-d670c45fedd5}"
+volume = 0.3
+
+[node name="UIResetEventEmitter" type="FmodEventEmitter2D" parent="Interface"]
+event_name = "event:/UI_Reset"
+event_guid = "{d48b853b-7348-4d58-8e74-6a268df7f70a}"
+volume = 0.3
+
 [node name="Audio" type="Node2D" parent="."]
 
 [node name="MusicBankLoader" type="FmodBankLoader" parent="Audio"]

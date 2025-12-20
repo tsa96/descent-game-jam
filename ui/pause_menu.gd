@@ -4,6 +4,7 @@ extends Control
 @onready var resume_button := $BackgroundShader/ColorRect/VBoxContainer/ResumeButton
 @onready var audio_player: AudioStreamPlayer2D = get_parent().get_node("InterfaceAudioPlayer")
 @onready var bgm := get_parent().get_parent().get_node("Audio/BGMEventEmitter") as FmodEventEmitter2D
+@onready var select_audio := get_parent().get_node("UISelectEventEmitter") as FmodEventEmitter2D
 
 var open_sound := preload("res://assets/audio/pause.ogg")
 
@@ -26,9 +27,12 @@ func open() -> void:
 
 
 func _on_resume_button_pressed() -> void:
+	if visible:
+		select_audio.play_one_shot()
 	close()
 
 
 func _on_quit_button_pressed() -> void:
 	if visible:
+		select_audio.play_one_shot()
 		get_tree().quit()
