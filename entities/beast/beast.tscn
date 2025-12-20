@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bc08rouos7uh7"]
+[gd_scene load_steps=8 format=3 uid="uid://bc08rouos7uh7"]
 
 [ext_resource type="Script" uid="uid://bjsshssjuf1e7" path="res://entities/beast/beast.gd" id="1_5r6js"]
 [ext_resource type="Texture2D" uid="uid://c3a1adtqn8xqm" path="res://assets/beast/beast_full.png" id="1_ng3ou"]
@@ -44,6 +44,9 @@ _data = {
 radius = 88.0
 height = 298.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5r6js"]
+size = Vector2(464, 3874)
+
 [node name="Beast" type="Area2D"]
 collision_layer = 3
 collision_mask = 3
@@ -80,6 +83,11 @@ texture = ExtResource("1_ng3ou")
 position = Vector2(0, 70)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_5r6js")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+position = Vector2(-7.999709, -1867)
+rotation = -3.1415925
+shape = SubResource("RectangleShape2D_5r6js")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

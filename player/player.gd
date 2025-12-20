@@ -172,10 +172,6 @@ func _physics_process(delta: float) -> void:
 		on_start_death.emit()
 
 	sticky.position.y = maxf(position.y, sticky.position.y + scroll_speed * delta)
-	
-	# Kill you stupid fast if you fall outside of view at any point
-	if sticky.position.y > position.y + sticky.get_viewport_rect().size[1] / 1.5:
-		sanity_drain(50)
 
 
 func play_character_audio(just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
