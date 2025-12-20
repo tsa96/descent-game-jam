@@ -1,19 +1,87 @@
-[gd_scene load_steps=3 format=3 uid="uid://bc08rouos7uh7"]
+[gd_scene load_steps=7 format=3 uid="uid://bc08rouos7uh7"]
 
 [ext_resource type="Script" uid="uid://bjsshssjuf1e7" path="res://entities/beast/beast.gd" id="1_5r6js"]
 [ext_resource type="Texture2D" uid="uid://c3a1adtqn8xqm" path="res://assets/beast/beast_full.png" id="1_ng3ou"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5r6js"]
+radius = 88.0
+height = 298.0
+
+[sub_resource type="Animation" id="Animation_5r6js"]
+resource_name = "appear"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="Animation" id="Animation_b3h1i"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_8gisi"]
+_data = {
+&"RESET": SubResource("Animation_b3h1i"),
+&"appear": SubResource("Animation_5r6js")
+}
 
 [node name="Beast" type="Node2D"]
 script = ExtResource("1_5r6js")
 
 [node name="Area2D" type="Area2D" parent="."]
-position = Vector2(0, 113)
+collision_layer = 3
+collision_mask = 3
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
-position = Vector2(-128, -112)
-polygon = PackedVector2Array(0, 0, 256, 0, 238.745, 110.74, 194.905, 149.54, 126.8, 157.35, 64, 150.495, 13.16, 100.055)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 70)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_5r6js")
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="FmodBankLoader" type="FmodBankLoader" parent="Audio"]
+bank_paths = ["res://assets/audio/Desktop/Enemies.bank", "res://assets/audio/Desktop/Master.bank"]
+
+[node name="FmodListener2D" type="FmodListener2D" parent="Audio"]
+
+[node name="MonsterRoarAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/MonsterRoar"
+event_guid = "{e88eaee5-36e9-40e3-a06c-75b0ee6dcceb}"
+volume = 0.5
+
+[node name="MonsterAppearAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/MonsterAppear"
+event_guid = "{7d9287fc-595f-4bc2-956f-c8145ceca9c7}"
+volume = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_8gisi")
+}
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, 113)
 scale = Vector2(1.05, 1.05)
 texture = ExtResource("1_ng3ou")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]
