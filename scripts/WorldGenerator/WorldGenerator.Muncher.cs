@@ -1,4 +1,4 @@
-﻿using Chunk = float[,];
+﻿using Cells = float[,];
 
 public partial class WorldGenerator
 {
@@ -6,9 +6,9 @@ public partial class WorldGenerator
 	class Muncher
 	{
 		// No reason for this not to be static or even for this class to exist. But it's funny.
-		public void EatChunk(Chunk chunk)
+		public void EatChunk(Cells cells)
 		{
-			Chunk buffer = new float[ChunkWidth, ChunkBigHeight];
+			Cells buffer = new float[ChunkWidth, ChunkBigHeight];
 			for (int i = 0; i < MuncherIters.Value; i++)
 			{
 				for (int x = 0; x < ChunkWidth; x++)
@@ -17,11 +17,11 @@ public partial class WorldGenerator
 					int openNeighbours = 0;
 					for (int j = 0; j < 8; j++)
 					{
-						if (HasOpenNeighbour(chunk, x, y, (Direction)j))
+						if (HasOpenNeighbour(cells, x, y, (Direction)j))
 							openNeighbours++;
 					}
 
-					float current = chunk[x, y];
+					float current = cells[x, y];
 					if (current >= AirThreshold.Value)
 					{
 						buffer[x, y] = openNeighbours >= MuncherAirNeighbours.Value ? 1.0f : 0.0f;
@@ -34,7 +34,7 @@ public partial class WorldGenerator
 
 				// Fast pointer swap. We always write to the buffer,
 				// which always become new Grid, so this is all we need.
-				(chunk, buffer) = (buffer, chunk);
+				(cells, buffer) = (buffer, cells);
 			}
 		}
 	}

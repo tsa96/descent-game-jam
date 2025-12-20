@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Chunk = float[,];
+using Cells = float[,];
 
 public partial class WorldGenerator
 {
@@ -9,10 +9,10 @@ public partial class WorldGenerator
 		public int Y { get; set; } = 0;
 
 		// 0 is downwards dir, -1 left, 1 right.
-		float Direction { get; set; } = 0;
+		float Dir { get; set; } = 0;
 
 		// Warning: I'm allowed to modify the moles list! Chaos ahead!
-		public void DigChunk(Chunk chunk, List<Mole> moles)
+		public void DigChunk(Cells cells, List<Mole> moles)
 		{
 			int width = MoleHoleSize.Value;
 			int side = SideMargin.Value;
@@ -28,12 +28,12 @@ public partial class WorldGenerator
 				if (X <= xMin)
 				{
 					X = xMin;
-					Direction = 0.75f; // Shove it back in the right direction
+					Dir = 0.75f; // Shove it back in the right direction
 				}
 				else if (X >= xMax)
 				{
 					X = xMax;
-					Direction = -0.75f;
+					Dir = -0.75f;
 				}
 
 				if (Y < 0)
@@ -41,12 +41,12 @@ public partial class WorldGenerator
 
 				if (Y < ChunkHeight)
 				{
-					chunk[X, Y] = 1.0f;
+					cells[X, Y] = 1.0f;
 					for (int i = 1; i < width; i++)
 					{
 						float f = 1.0f - width * MoleHoleFalloff.Value;
-						chunk[X - i, Y] = f;
-						chunk[X + i, Y] = f;
+						cells[X - i, Y] = f;
+						cells[X + i, Y] = f;
 					}
 
 					// Clear out space above us as well - I *think* unless muncher
@@ -54,12 +54,12 @@ public partial class WorldGenerator
 					// get transferable gaps for our player size and hole size of 2.
 					if (Y > 0)
 					{
-						chunk[X, Y - 1] = 1.0f;
+						cells[X, Y - 1] = 1.0f;
 						for (int i = 1; i < width; i++)
 						{
 							float f = 1.0f - width * MoleHoleFalloff.Value;
-							chunk[X - i, Y - 1] = f;
-							chunk[X + i, Y - 1] = f;
+							cells[X - i, Y - 1] = f;
+							cells[X + i, Y - 1] = f;
 						}
 					}
 				}
@@ -69,9 +69,9 @@ public partial class WorldGenerator
 					break;
 				}
 
-				TrySpawnNewMole(chunk, moles, lastMovedX);
+				TrySpawnNewMole(cells, moles, lastMovedX);
 
-				if (CheckDied(chunk))
+				if (CheckDied(cells))
 				{
 					moles.Remove(this);
 					return;
@@ -92,9 +92,9 @@ public partial class WorldGenerator
 				: Random.Randf() * 2.0f - 1.0f;
 			bool movedX = false;
 
-			Direction = newDir + Direction * MolePreviousDirMult.Value;
+			Dir = newDir + Dir * MolePreviousDirMult.Value;
 			// csharpier-ignore
-            switch (Direction)
+            switch (Dir)
             {
                 // We could allow tunnelling upwards if we really wanted but needs logic to avoid occasionally
                 // tunnelling upwards out of bounds. Doesn't have much benefit and good MoleSpawnChance values do a
@@ -120,23 +120,23 @@ public partial class WorldGenerator
 			return movedX;
 		}
 
-		void TrySpawnNewMole(Chunk chunk, List<Mole> moles, bool lastMovedX)
+		void TrySpawnNewMole(Cells cells, List<Mole> moles, bool lastMovedX)
 		{
 			if (Random.Randf() > MoleSpawnChance.Value || moles.Count >= MaxMoles || lastMovedX)
 				return;
 
 			var newMole = new Mole { X = (int)Random.Randi() % ChunkWidth, Y = Y };
 			moles.Add(newMole);
-			newMole.DigChunk(chunk, moles);
+			newMole.DigChunk(cells, moles);
 		}
 
-		bool CheckDied(Chunk chunk)
+		bool CheckDied(Cells cells)
 		{
 			// Moles run first, so if we encounter open space below us, some other mole was here first
 			if (Y == ChunkHeight - 1)
 				return false;
 
-			if (chunk[X - MoleHoleSize.Value, Y + 1] >= 1.0f || chunk[X + MoleHoleSize.Value, Y + 1] >= 1.0f)
+			if (cells[X - MoleHoleSize.Value, Y + 1] >= 1.0f || cells[X + MoleHoleSize.Value, Y + 1] >= 1.0f)
 			{
 				// Gadzooks! We died.
 				return (Random.Randf() < MoleMergeChance.Value);

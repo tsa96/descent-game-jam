@@ -13,9 +13,9 @@ using Godot;
 //
 // Generation runs on a dedicated .NET taskpool thread as player falls through the
 // world, working with 2D float arrays, then setting cells on a new, un-parented
-// TileMapLayer (cell setting is by far the most expensive step). Completed layers
+// TileMapLayer (cell setting is by far the most expensive step). Completed chunks
 // are pushed to a queue, where the _process calls on the main thread then attaches
-// the layer to the World scene.
+// the chunk's TileMapLayer to the World scene.
 public partial class WorldGenerator : Node2D
 {
 	const int ChunkWidth = 40;
@@ -24,10 +24,8 @@ public partial class WorldGenerator : Node2D
 	const int ChunkExtraDiff = ChunkHeight - ChunkExtraHeight;
 	const int ChunkBigHeight = ChunkHeight + ChunkExtraHeight * 2;
 	const int ChunkHalfWidth = ChunkWidth / 2;
-	const int InitialLayers = 1;
-	const int ChunksPerLayer = 24;
-	const int LayerHeight = ChunkHeight * ChunksPerLayer;
-	const int LayersFromBottomToTriggerGeneration = 4;
+	const int InitialChunks = 4;
+	const int ChunksFromBottomToTriggerGeneration = 4;
 	const int TileSize = 16;
 	const int MaxMoles = 8;
 
@@ -46,17 +44,16 @@ public partial class WorldGenerator : Node2D
 
 	CharacterBody2D Player;
 
-	int LayerCount = 0;
-	int BottomLayer = 0;
-	int RequestedLayers = 0;
-	int CleanupTracker = 0;
+	int ChunkCount = 0;
+	int BottomChunk = 0;
+	int RequestedChunks = 0;
 
 	Node2D LayerContainer;
-	static TileSet LayerTileSet;
-	static Vector2 LayerScale;
-	ConcurrentQueue<Layer> LayerQueue = new();
-	CancellationTokenSource LayerThreadCts = new();
-	Dictionary<int, Layer> Layers = new();
+	static TileSet TileMapLayerTileSet;
+	static Vector2 TileMapScale;
+	ConcurrentQueue<Chunk> ChunkQueue = new();
+	CancellationTokenSource ChunkThreadCts = new();
+	Dictionary<int, Chunk> Chunks = new();
 
 	Node2D EntityContainer;
 
@@ -73,14 +70,14 @@ public partial class WorldGenerator : Node2D
 
 		// Can't access .Scale from tp thread for some reason (but we can with tileset ??)
 		var layerTemplate = GetNode<TileMapLayer>("TileMapTemplateLayer");
-		LayerTileSet = layerTemplate.TileSet;
-		LayerScale = layerTemplate.Scale;
+		TileMapLayerTileSet = layerTemplate.TileSet;
+		TileMapScale = layerTemplate.Scale;
 
 		InitializeSettings();
 		ResetWorld();
 
 		// Run generation on .NET taskpool thread, pushes completed Layers to queue on completion
-		Task.Run(ProcessLayerQueue, LayerThreadCts.Token);
+		Task.Run(ProcessLayerQueue, ChunkThreadCts.Token);
 
 		base._Ready();
 	}
@@ -89,21 +86,21 @@ public partial class WorldGenerator : Node2D
 	{
 		// When we get close to bottom, start triggering more
 		int yPos = (int)Player.Position.Y;
-		if (yPos > (LayerCount - LayersFromBottomToTriggerGeneration) * LayerHeight)
+		if (yPos > (ChunkCount - ChunksFromBottomToTriggerGeneration) * ChunkHeight)
 		{
-			LayerCount++;
-			RequestedLayers++;
+			ChunkCount++;
+			RequestedChunks++;
 		}
 
 		// Add newly generated layers to scene
-		while (LayerQueue.TryDequeue(out Layer layer))
+		while (ChunkQueue.TryDequeue(out Chunk layer))
 		{
 			LayerContainer.AddChild(layer.TileMapLayer);
-			layer.TileMapLayer.Position = new Vector2(0, BottomLayer * LayerHeight * TileSize);
-			Layers.Add(BottomLayer, layer);
+			layer.TileMapLayer.Position = new Vector2(0, BottomChunk * ChunkHeight * TileSize);
+			Chunks.Add(BottomChunk, layer);
 
 			for (int x = -ChunkHalfWidth; x < ChunkHalfWidth; x++)
-			for (int y = 0; y < LayerHeight; y++)
+			for (int y = 0; y < ChunkHeight; y++)
 			{
 				var coords = new Vector2I(x, y);
 				int cell = layer.TileMapLayer.GetCellSourceId(coords);
@@ -133,7 +130,7 @@ public partial class WorldGenerator : Node2D
 							: SanityDrainingScene.Instantiate<Node2D>();
 					entityInstance.Position = new Vector2I(
 						coords.X * TileSize,
-						(coords.Y + BottomLayer * LayerHeight) * TileSize
+						(coords.Y + BottomChunk * ChunkHeight) * TileSize
 					);
 					// Flip sprite if attached to left wall
 					if (left != -1)
@@ -155,7 +152,7 @@ public partial class WorldGenerator : Node2D
 							: Hallucination2Scene.Instantiate<Node2D>();
 					entityInstance.Position = new Vector2I(
 						coords.X * TileSize,
-						(coords.Y + BottomLayer * LayerHeight) * TileSize
+						(coords.Y + BottomChunk * ChunkHeight) * TileSize
 					);
 					var animationPlayer = entityInstance.GetNode<AnimationPlayer>("AnimationPlayer");
 					animationPlayer?.Play("loop");
@@ -163,7 +160,7 @@ public partial class WorldGenerator : Node2D
 				}
 			}
 
-			BottomLayer++;
+			BottomChunk++;
 		}
 
 		// TODO: Old layer cleanup, previous stuff was buggy.
@@ -177,12 +174,12 @@ public partial class WorldGenerator : Node2D
 		// us (>:D), could crash if we clear out the moles in this thread.
 		// This shouldn't be noticeable, unless we have a mole looping forever (that would've
 		// happened in single-threaded version anyway, who cares).
-		while (RequestedLayers > 0) { }
+		while (RequestedChunks > 0) { }
 
 		// Reset noise
 		SeedNoise();
 
-		LayerQueue.Clear();
+		ChunkQueue.Clear();
 
 		foreach (TileMapLayer tml in LayerContainer.GetChildren().OfType<TileMapLayer>())
 			tml.QueueFree();
@@ -190,32 +187,54 @@ public partial class WorldGenerator : Node2D
 		foreach (Node2D entity in EntityContainer.GetChildren().OfType<Node2D>())
 			entity.QueueFree();
 
-		Layers.Clear();
+		Chunks.Clear();
 		Moles.Clear();
+		LastChunk = null;
 
 		// Start generating again on next frame to ensure everything is cleaned up
 		Callable
 			.From(() =>
 			{
+				for (int i = 0; i < MoleStartCount.Value; i++)
+				{
+					var mole = new Mole();
+
+					// First mole should always start in centre.
+					if (i == 0)
+						mole.X = ChunkHalfWidth - 1;
+
+					Moles.Add(mole);
+				}
+
 				// Setting this will get generator thread going
-				RequestedLayers = InitialLayers;
-				BottomLayer = 0;
-				LayerCount = 0;
+				LastChunk = null;
+				RequestedChunks = InitialChunks;
+				BottomChunk = 0;
+				ChunkCount = 0;
 			})
 			.CallDeferred();
 	}
 
+	static Chunk LastChunk = null;
+
 	void ProcessLayerQueue()
 	{
-		while (!LayerThreadCts.IsCancellationRequested)
+		while (!ChunkThreadCts.IsCancellationRequested)
 		{
-			while (RequestedLayers > 0)
+			while (RequestedChunks > 0)
 			{
 				ulong startTime = Time.GetTicksMsec();
 
-				Layer layer = Layer.Generate();
-				LayerQueue.Enqueue(layer);
-				RequestedLayers--;
+				Chunk chunk = new Chunk
+				{
+					Cells = LastChunk is not null ? CloneCells(LastChunk.Cells) : null,
+					NextChunk = LastChunk?.NextChunk
+				};
+
+				chunk.Generate();
+				LastChunk = chunk;
+				ChunkQueue.Enqueue(chunk);
+				RequestedChunks--;
 
 				GD.Print($"Generated layer in {Time.GetTicksMsec() - startTime}ms");
 			}
@@ -229,8 +248,8 @@ public partial class WorldGenerator : Node2D
 
 		// TODO: This won't work on layer boundaries.
 		// Still wrong past first layer!! Maths seems right, don't fuckin know
-		Layer layer = Layers[(pos.Y + 12) / TileSize];
-		if (layer is null)
+		Chunk chunk = Chunks[(pos.Y + 12) / TileSize];
+		if (chunk is null)
 		{
 			GD.PushWarning($"Failed to find TileMapLayer for pos X: ${x}, Y: ${y}");
 			return;
@@ -249,13 +268,13 @@ public partial class WorldGenerator : Node2D
 			if (nx < 0 || ny < 0 || nx >= ChunkWidth || ny >= ChunkHeight)
 				continue;
 
-			layer.TileMapLayer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
+			chunk.TileMapLayer.EraseCell(new Vector2I(nx - ChunkHalfWidth, ny));
 		}
 	}
 
 	protected override void Dispose(bool disposing)
 	{
-		LayerThreadCts.Cancel();
+		ChunkThreadCts.Cancel();
 		base.Dispose(disposing);
 	}
 }

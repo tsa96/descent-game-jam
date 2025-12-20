@@ -1,19 +1,16 @@
 ﻿using System;
-using Chunk = float[,];
+using Cells = float[,];
 
 public partial class WorldGenerator
 {
 	class Mangler
 	{
-		public void MangleChunk(Chunk chunk, int chunkDepth)
+		public void MangleChunk(Cells cells)
 		{
 			for (int x = 0; x < ChunkWidth; x++)
 			for (int y = 0; y < ChunkHeight; y++)
 			{
-				chunk[x, y] = Math.Max(
-					chunk[x, y],
-					ManglerNoise.GetNoise2D(x * 2, ChunkHeight * chunkDepth + y) * ManglerStrengthMult.Value
-				);
+				cells[x, y] = Math.Max(cells[x, y], ManglerNoise.GetNoise2D(x * 2, y) * ManglerStrengthMult.Value);
 			}
 		}
 	}

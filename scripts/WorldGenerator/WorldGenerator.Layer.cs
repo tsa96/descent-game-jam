@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Godot;
-using Chunk = float[,];
+using Cells = float[,];
 
 public partial class WorldGenerator
 {
@@ -28,7 +28,7 @@ public partial class WorldGenerator
 		new(-1, -1),
 	];
 
-	static bool HasOpenNeighbour(Chunk chunk, int x, int y, Direction direction)
+	static bool HasOpenNeighbour(Cells chunk, int x, int y, Direction direction)
 	{
 		Vector2I dir = DirectionVectors[(int)direction];
 		int nx = x + dir.X;
@@ -37,47 +37,19 @@ public partial class WorldGenerator
 		return nx is >= 0 and < ChunkWidth && ny is >= 0 and < ChunkBigHeight && chunk[nx, ny] >= AirThreshold.Value;
 	}
 
-	public class Layer
+	public class Chunk
 	{
-		Layer(TileMapLayer tileMapLayer) => TileMapLayer = tileMapLayer;
+		public TileMapLayer TileMapLayer { get; } = new() { TileSet = TileMapLayerTileSet, Scale = TileMapScale };
 
-		public TileMapLayer TileMapLayer { get; }
+		public Cells Cells { get; set; }
 
-		Chunk NextChunk;
-		Chunk CurrChunk;
-		Chunk PrevChunk;
-		int ChunkDepth;
+		// linkedlist pog
+		public Chunk NextChunk { get; set; }
+		public Chunk PrevChunk { get; set; }
 
-		public static Layer Generate()
+		public void Generate()
 		{
-			var tml = new TileMapLayer
-			{
-				CollisionEnabled = true,
-				TileSet = LayerTileSet,
-				Scale = LayerScale,
-			};
-
-			var layer = new Layer(tml);
-
-			for (int i = 0; i < MoleStartCount.Value; i++)
-			{
-				var mole = new Mole();
-
-				// First mole should always start in centre.
-				if (i == 0)
-					mole.X = ChunkHalfWidth - 1;
-
-				Moles.Add(mole);
-			}
-
-			for (int i = 0; i < ChunksPerLayer; i++)
-				layer.GenerateChunk();
-
-			return layer;
-		}
-
-		void GenerateChunk()
-		{
+			// NOTE: Refactoring this all at last minute, don't have time to update this comments. Below stuff is wrong.
 			// Muncher needs to know some pre-munched state of previous AND next chunk to be seamless (fuck). So,
 			// 1. Copy CurrChunk to PrevChunk
 			//    1a. If CurrChunk is null, create surface chunk of air
@@ -88,60 +60,57 @@ public partial class WorldGenerator
 			// 5. Munch bigChunk
 			// 6. Write bigChunk to tiles
 			// Performance seems fine; main cost is still running muncher items.
-			if (CurrChunk == null)
+			if (Cells is null)
 			{
-				PrevChunk = NewChunk();
+				PrevChunk = new Chunk { Cells = InitCells() };
 				for (int x = 0; x < ChunkWidth; x++)
 				for (int y = 0; y < ChunkHeight; y++)
-					PrevChunk[x, y] = 1.0f;
+					PrevChunk.Cells[x, y] = 1.0f;
 			}
 			else
 			{
-				MoleAndMangle(CurrChunk);
-				PrevChunk = CloneChunk(CurrChunk);
+				MoleAndMangle(Cells);
+				PrevChunk = new Chunk { Cells = CloneCells(Cells) };
 			}
 
 			if (NextChunk == null)
 			{
-				CurrChunk = NewChunk();
-				MoleAndMangle(CurrChunk);
-				ChunkDepth++;
+				Cells = InitCells();
+				MoleAndMangle(Cells);
 			}
 			else
 			{
-				CurrChunk = CloneChunk(NextChunk);
+				Cells = CloneCells(NextChunk.Cells);
 			}
 
-			NextChunk = NewChunk();
+			NextChunk = new Chunk { Cells = InitCells() };
 			foreach (Mole mole in Moles)
 				mole.Y = 0;
-			MoleAndMangle(NextChunk);
+			MoleAndMangle(NextChunk.Cells);
 
-			Chunk bigChunk = new float[ChunkWidth, ChunkBigHeight];
+			Cells bigChunk = new float[ChunkWidth, ChunkBigHeight];
 
 			// We need a copy of the active chunk anyway, seems *much* faster when we work
 			// with contiguous arrays when doing neighbour checks.
 			for (int x = 0; x < ChunkWidth; x++)
 			{
 				for (int y = 0; y < ChunkExtraHeight; y++)
-					bigChunk[x, y] = PrevChunk[x, ChunkExtraDiff + y];
+					bigChunk[x, y] = PrevChunk.Cells[x, ChunkExtraDiff + y];
 
 				for (int y = 0; y < ChunkHeight; y++)
-					bigChunk[x, y + ChunkExtraHeight] = CurrChunk[x, y];
+					bigChunk[x, y + ChunkExtraHeight] = Cells[x, y];
 
 				for (int y = 0; y < ChunkExtraHeight; y++)
-					bigChunk[x, y + ChunkExtraHeight + ChunkHeight] = NextChunk[x, y];
+					bigChunk[x, y + ChunkExtraHeight + ChunkHeight] = NextChunk.Cells[x, y];
 			}
 
 			var muncher = new Muncher();
 			muncher.EatChunk(bigChunk);
 
-			WriteTileMap(bigChunk, ChunkDepth - 1);
-
-			ChunkDepth++;
+			WriteTileMap(bigChunk);
 		}
 
-		void MoleAndMangle(Chunk chunk)
+		void MoleAndMangle(Cells chunk)
 		{
 			// Moles are allowed to kill each other / go through mitosis (??) so `moles` list will be modified.
 			// So obviously make a copy of list as we iter, and who knows what we'll end up with by the end.
@@ -149,13 +118,13 @@ public partial class WorldGenerator
 				mole.DigChunk(chunk, Moles);
 
 			Mangler mangler = new();
-			mangler.MangleChunk(chunk, ChunkDepth);
+			mangler.MangleChunk(chunk);
 
 			// Ensure sides are rock
 			AddSideMargin(chunk);
 		}
 
-		void AddSideMargin(Chunk chunk)
+		void AddSideMargin(Cells chunk)
 		{
 			for (int x = 0; x < SideMargin.Value; x++)
 			for (int y = 0; y < ChunkHeight; y++)
@@ -166,7 +135,7 @@ public partial class WorldGenerator
 			}
 		}
 
-		Vector2I GetAtlasCoords(Chunk c, int x, int y)
+		Vector2I GetAtlasCoords(Cells c, int x, int y)
 		{
 			bool T = HasOpenNeighbour(c, x, y, Direction.Top);
 			bool B = HasOpenNeighbour(c, x, y, Direction.Bottom);
@@ -228,7 +197,7 @@ public partial class WorldGenerator
 			return new(5, 4);
 		}
 
-		void WriteTileMap(Chunk bigChunk, int chunkDepth)
+		void WriteTileMap(Cells bigChunk)
 		{
 			for (int x = 0; x < ChunkWidth; x++)
 			for (int y = ChunkExtraHeight; y < ChunkHeight + ChunkExtraHeight; y++)
@@ -260,23 +229,19 @@ public partial class WorldGenerator
 					atlasCoords = GetAtlasCoords(bigChunk, x, y);
 				}
 
-				TileMapLayer.SetCell(
-					new Vector2I(x - ChunkHalfWidth, ChunkHeight * chunkDepth + (y - ChunkExtraHeight)),
-					0,
-					atlasCoords
-				);
+				TileMapLayer.SetCell(new Vector2I(x - ChunkHalfWidth, y - ChunkExtraHeight), 0, atlasCoords);
 			}
 		}
 	}
 
-	static Chunk NewChunk()
+	static Cells InitCells()
 	{
 		return new float[ChunkWidth, ChunkHeight];
 	}
 
-	static Chunk CloneChunk(Chunk chunk)
+	static Cells CloneCells(Cells chunk)
 	{
-		Chunk cloned = NewChunk();
+		Cells cloned = InitCells();
 
 		for (int x = 0; x < ChunkWidth; x++)
 		for (int y = 0; y < ChunkHeight; y++)
