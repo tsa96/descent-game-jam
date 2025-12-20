@@ -28,6 +28,7 @@ const FALLING_ANIM = "fall"
 const FALLING_FAST_ANIM = "fastfall"
 const DASH_ANIM = "dash"
 const LANDING_ANIM = "land"
+const DEAD_ANIM = "death"
 
 var scroll_speed: float
 var gravity: int = ProjectSettings.get(&"physics/2d/default_gravity")
@@ -35,6 +36,7 @@ var dash_charged: bool
 var last_walljump: float
 var footstep_audio_timer: float
 var regen_on: float
+var dead: bool = false
 
 @onready var wall_jump_ray_left := $WallClimbRayLeft as RayCast2D
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
@@ -47,12 +49,16 @@ var regen_on: float
 @onready var land_high_vel_audio_emitter := $Audio/LandHighVelocityAudioEventEmitter as FmodEventEmitter2D
 @onready var dash_audio_emitter := $Audio/DashAudioEventEmitter as FmodEventEmitter2D
 
+signal on_reset()
+signal on_start_death()
+signal on_death()
+
 
 func _ready() -> void:
-	reset()
+	reset(true)
 
 
-func reset() -> void:
+func reset(silent: bool = false) -> void:
 	sanity = SANITY_MAX
 	position = START_POS
 	velocity = Vector2(0, 0)
@@ -61,9 +67,18 @@ func reset() -> void:
 	last_walljump = 1000
 	footstep_audio_timer = 0
 	scroll_speed = 0
+	dead = false
+	if not silent:
+		on_reset.emit()
 
 
 func _physics_process(delta: float) -> void:
+	if dead:
+		velocity.x = move_toward(velocity.x, 0, WALK_ACCEL * delta)
+		velocity.y = minf(TERMINAL_VELOCITY, velocity.y + gravity * delta)
+		move_and_slide()
+		return
+	
 	if is_on_floor():
 		dash_charged = true
 		
@@ -148,7 +163,9 @@ func _physics_process(delta: float) -> void:
 	
 	# Death
 	if sanity <= 0:
-		reset()
+		dead = true
+		play_animation(direction, false, false)
+		on_start_death.emit()
 
 	process_camera(delta)
 
@@ -178,7 +195,9 @@ func play_animation(direction: float, just_dashed: bool, just_landed: bool) -> v
 	
 	var animation: String
 	
-	if just_dashed:
+	if dead:
+		animation = DEAD_ANIM
+	elif just_dashed:
 		animation = DASH_ANIM
 	elif just_landed:
 		animation = LANDING_ANIM
@@ -200,7 +219,7 @@ func play_animation(direction: float, just_dashed: bool, just_landed: bool) -> v
 	if cur_animation == animation:
 		return
 	
-	if player_animator.is_playing() and (cur_animation == DASH_ANIM or cur_animation == LANDING_ANIM) and (animation != LANDING_ANIM and animation != JUMPING_ANIM):
+	if player_animator.is_playing() and (cur_animation == DASH_ANIM or cur_animation == LANDING_ANIM) and (animation != LANDING_ANIM and animation != JUMPING_ANIM and animation != DEAD_ANIM):
 		# Let dash/land anim play fully before continuing with walk/fall. Prevents those from squashing these anims
 		return
 	
@@ -228,3 +247,8 @@ func sanity_gain(damage: float):
 
 func sanity_drain(damage: float):
 	sanity -= damage
+
+func _on_player_animator_animation_finished(anim_name: StringName) -> void:
+	if anim_name == DEAD_ANIM:
+		on_death.emit()
+		

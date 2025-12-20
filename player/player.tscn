@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dsqy8lxrpip13"]
+[gd_scene load_steps=14 format=3 uid="uid://dsqy8lxrpip13"]
 
 [ext_resource type="Script" uid="uid://ddbwt6ntihs35" path="res://player/player.gd" id="3"]
 [ext_resource type="Texture2D" uid="uid://blrwea1erll" path="res://assets/player.png" id="3_g1dw6"]
@@ -32,6 +32,22 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [12, 13]
+}
+
+[sub_resource type="Animation" id="Animation_8t03j"]
+resource_name = "death"
+length = 1.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PlayerSprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 14, 15, 16, 17, 18, 19]
 }
 
 [sub_resource type="Animation" id="Animation_qjkh3"]
@@ -130,6 +146,7 @@ tracks/0/keys = {
 _data = {
 &"RESET": SubResource("Animation_g1dw6"),
 &"dash": SubResource("Animation_hg6s5"),
+&"death": SubResource("Animation_8t03j"),
 &"fall": SubResource("Animation_qjkh3"),
 &"fastfall": SubResource("Animation_boad6"),
 &"idle": SubResource("Animation_rkbax"),
@@ -151,7 +168,7 @@ script = ExtResource("3")
 [node name="PlayerSprite" type="Sprite2D" parent="."]
 position = Vector2(-2.5243547e-29, -7.499999)
 texture = ExtResource("3_g1dw6")
-hframes = 14
+hframes = 20
 
 [node name="PlayerAnimator" type="AnimationPlayer" parent="."]
 libraries = {
@@ -200,4 +217,5 @@ event_name = "event:/Dash"
 event_guid = "{8a569a89-1715-42f5-b1ae-0dca887adc05}"
 volume = 0.5
 
+[connection signal="animation_finished" from="PlayerAnimator" to="." method="_on_player_animator_animation_finished"]
 [connection signal="timeout" from="Regen" to="." method="_on_regen_timeout"]

@@ -5,6 +5,8 @@ extends Node
 @onready var world := $World
 @onready var player := $World/Player as Player
 @onready var pause_menu := $Interface/PauseMenu as PauseMenu
+@onready var death_screen := $Interface/DeathScreen as DeathScreen
+@onready var hud := $Interface/HUD as HUD
 @onready var debug_ui := $Interface/Debug
 @onready var bgm := $Audio/BGMEventEmitter as FmodEventEmitter2D
 
@@ -50,7 +52,7 @@ func _unhandled_input(input_event: InputEvent) -> void:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 		get_tree().root.set_input_as_handled()
 
-	elif input_event.is_action_pressed(&"toggle_pause"):
+	elif input_event.is_action_pressed(&"toggle_pause") and not player.dead:
 		var tree := get_tree()
 		tree.paused = not tree.paused
 		if tree.paused:
@@ -69,5 +71,20 @@ func _unhandled_input(input_event: InputEvent) -> void:
 
 # Completely reset game state. Bye!
 func reset() -> void:
-	world.ResetWorld()
 	player.reset()
+	get_tree().paused = false
+	death_screen.close()
+	pause_menu.close()
+	hud.show()
+
+func _on_player_on_reset() -> void:
+	world.ResetWorld()
+
+func _on_player_on_death() -> void:
+	var tree := get_tree()
+	tree.paused = true
+	death_screen.open()
+	get_tree().root.set_input_as_handled()
+
+func _on_player_on_start_death() -> void:
+	hud.hide()
