@@ -171,7 +171,11 @@ func _physics_process(delta: float) -> void:
 		play_character_audio(false, false, false)
 		on_start_death.emit()
 
-	process_camera(delta)
+	sticky.position.y = maxf(position.y, sticky.position.y + scroll_speed * delta)
+	
+	# Kill you stupid fast if you fall outside of view at any point
+	if sticky.position.y > position.y + sticky.get_viewport_rect().size[1] / 1.5:
+		sanity_drain(50)
 
 
 func play_character_audio(just_dashed: bool, just_fell: bool, just_landed: bool, prev_fall_speed: float = 0.0) -> void:
@@ -236,10 +240,6 @@ func is_close_to_wall() -> bool:
 	return wall_jump_ray_left.is_colliding() or wall_jump_ray_right.is_colliding()
 
 
-func process_camera(delta: float) -> void:
-	sticky.position.y = maxf(position.y, sticky.position.y + scroll_speed * delta)
-	
-
 func _on_regen_timeout() -> void:
 	regen_on = true
 
@@ -249,8 +249,10 @@ func sanity_gain(damage: float):
 	dash_charged = true
 	regen_on = true
 
+
 func sanity_drain(damage: float):
 	sanity -= damage
+
 
 func mushie_eaten(good: bool):
 	if good:
@@ -258,15 +260,19 @@ func mushie_eaten(good: bool):
 	else:
 		eating_psyc_audio_emitter.play_one_shot()
 
+
 func _on_player_animator_animation_finished(anim_name: StringName) -> void:
 	if anim_name == DEAD_ANIM:
 		on_death.emit()
 
+
 func _on_player_death_hit_floor() -> void:
 	land_high_vel_audio_emitter.play_one_shot()
 
+
 func _on_player_death_tripped() -> void:
 	footstep_audio_emitter.play_one_shot()
+
 
 func _on_player_footstep() -> void:
 	footstep_audio_emitter.play_one_shot()
