@@ -11,7 +11,7 @@ func appear() -> void:
 func roar() -> void:
 	roar_audio_emitter.play_one_shot()
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if player_inside != null:
 		player_inside.sanity_gain(-2.0)
 
