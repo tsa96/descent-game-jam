@@ -20,6 +20,7 @@ const WALL_JUMP_COOLDOWN = 1
 const WALL_JUMP_MAX_SPEED = 250
 const FOOTSTEP_AUDIO_TIMER_RESET = .3
 const HIGH_LANDING_VELOCITY = 400.0
+const COYOTE_TIME = 0.1
 
 const IDLE_ANIM = "idle"
 const WALK_ANIM = "walk"
@@ -37,6 +38,7 @@ var last_walljump: float
 var footstep_audio_timer: float
 var regen_on: float
 var dead: bool = false
+var coyote_timer: float
 
 @onready var wall_jump_ray_left := $WallClimbRayLeft as RayCast2D
 @onready var wall_jump_ray_right := $WallClimbRayRight as RayCast2D
@@ -71,6 +73,7 @@ func reset(silent: bool = false) -> void:
 	footstep_audio_timer = 0
 	scroll_speed = 0
 	dead = false
+	coyote_timer = 1000
 	if not silent:
 		on_reset.emit()
 
@@ -84,6 +87,9 @@ func _physics_process(delta: float) -> void:
 	
 	if is_on_floor():
 		dash_charged = true
+		coyote_timer = 0
+	else:
+		coyote_timer += delta
 		
 	var direction := Input.get_axis("move_left", "move_right")
 		
@@ -94,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		
 	# Jumping
 	if Input.is_action_just_pressed("jump"):
-		if is_on_floor():
+		if is_on_floor() or coyote_timer < COYOTE_TIME:
 			velocity.y = JUMP_VELOCITY
 			footstep_audio_emitter.play()
 		elif is_close_to_wall() and velocity.y < WALL_JUMP_MAX_SPEED and last_walljump > WALL_JUMP_COOLDOWN:
