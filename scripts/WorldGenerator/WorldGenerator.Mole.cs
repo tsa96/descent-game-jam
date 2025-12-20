@@ -5,7 +5,7 @@ public partial class WorldGenerator
 {
 	class Mole
 	{
-		public int X { get; set; } = (int)Random.Randi() % ChunkHalfWidth;
+		public int X { get; set; } = (int)Random.RandiRange(0, ChunkWidth - 1);
 		public int Y { get; set; } = 0;
 
 		// 0 is downwards dir, -1 left, 1 right.
@@ -81,6 +81,8 @@ public partial class WorldGenerator
 			}
 		}
 
+		int downwardsCounter = 0;
+
 		// Tunnels downwards / to the side. Returns if we moved sideways so we
 		// can avoid spawning loads of moles if we move sideways excessively.
 		bool Tunnel()
@@ -91,31 +93,47 @@ public partial class WorldGenerator
 				? Random.Randfn(0, MoleNormalSigma.Value)
 				: Random.Randf() * 2.0f - 1.0f;
 			bool movedX = false;
+			bool movedOnlyY = false;
 
 			Dir = newDir + Dir * MolePreviousDirMult.Value;
 			// csharpier-ignore
-            switch (Dir)
-            {
-                // We could allow tunnelling upwards if we really wanted but needs logic to avoid occasionally
-                // tunnelling upwards out of bounds. Doesn't have much benefit and good MoleSpawnChance values do a
-                // really good job at generating sections above us.
-                // case < -1.0f or > 1.0f:
-                //     Y--;
-                //     break;
-                case > -1.0f and < -0.5f:
-                    X--;
+        switch (Dir)
+        {
+            case > -1.0f and < -0.5f:
+                X--;
+				movedX = true;
+                Y++;
+                break;
+            case > -0.5f and < 0.5f:
+                Y++;
+                movedOnlyY = true;
+                break;
+            case > 0.5f and < 1.0f:
+                X++;
+				movedX = true;
+                Y++;
+                break;
+        }
+
+			// Moles should be *heavily* biased to avoid going downwards for long periods of time.
+			if (movedOnlyY)
+			{
+				downwardsCounter++;
+				if (downwardsCounter >= 3)
+				{
+					// Force left or right move, biased away from nearest wall
+					if (X < ChunkHalfWidth)
+						X++;
+					else
+						X--;
 					movedX = true;
-                    // Y++;
-                    break;
-                case > -0.5f and < 0.5f:
-                    Y++;
-                    break;
-                case > 0.5f and < 1.0f:
-                    X++;
-					movedX = true;
-                    // Y++;
-                    break;
-            }
+					downwardsCounter -= 2;
+				}
+			}
+			else
+			{
+				downwardsCounter -= 1;
+			}
 
 			return movedX;
 		}
@@ -125,7 +143,7 @@ public partial class WorldGenerator
 			if (Random.Randf() > MoleSpawnChance.Value || moles.Count >= MaxMoles || lastMovedX)
 				return;
 
-			var newMole = new Mole { X = (int)Random.Randi() % ChunkWidth, Y = Y };
+			var newMole = new Mole { X = (int)Random.RandiRange(0, ChunkWidth - 1), Y = Y };
 			moles.Add(newMole);
 			newMole.DigChunk(cells, moles);
 		}

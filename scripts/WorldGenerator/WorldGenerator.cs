@@ -93,79 +93,79 @@ public partial class WorldGenerator : Node2D
 		}
 
 		// Add newly generated layers to scene
-		while (ChunkQueue.TryDequeue(out Chunk layer))
+		while (ChunkQueue.TryDequeue(out Chunk chunk))
 		{
-			LayerContainer.AddChild(layer.TileMapLayer);
-			layer.TileMapLayer.Position = new Vector2(0, BottomChunk * ChunkHeight * TileSize);
-			Chunks.Add(BottomChunk, layer);
-
-			for (int x = -ChunkHalfWidth; x < ChunkHalfWidth; x++)
-			for (int y = 0; y < ChunkHeight; y++)
-			{
-				var coords = new Vector2I(x, y);
-				int cell = layer.TileMapLayer.GetCellSourceId(coords);
-				if (cell != -1)
-					continue;
-
-				int left = layer.TileMapLayer.GetCellSourceId(
-					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.LeftSide)
-				);
-				int right = layer.TileMapLayer.GetCellSourceId(
-					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
-				);
-				int up = layer.TileMapLayer.GetCellSourceId(
-					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.TopSide)
-				);
-				int down = layer.TileMapLayer.GetCellSourceId(
-					layer.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.BottomSide)
-				);
-
-				float spawnChance = Random.Randf();
-
-				if ((left != -1 || right != -1) && up == -1 && spawnChance < SanityItemSpawnChance)
-				{
-					var entityInstance =
-						Random.Randf() < SanityRestorePreference
-							? SanityRestoringScene.Instantiate<Node2D>()
-							: SanityDrainingScene.Instantiate<Node2D>();
-					entityInstance.Position = new Vector2I(
-						coords.X * TileSize,
-						(coords.Y + BottomChunk * ChunkHeight) * TileSize
-					);
-					// Flip sprite if attached to left wall
-					if (left != -1)
-					{
-						var sprite = entityInstance.GetNode<Sprite2D>("Sprite2D");
-						if (sprite != null)
-							sprite.FlipH = true;
-					}
-					EntityContainer.AddChild(entityInstance);
-				}
-				else if (
-					(left == -1 && right == -1 && up == -1 && down == -1)
-					&& spawnChance < HallucinationSpawnChance
-				)
-				{
-					var entityInstance =
-						Random.Randf() < 0.5
-							? Hallucination1Scene.Instantiate<Node2D>()
-							: Hallucination2Scene.Instantiate<Node2D>();
-					entityInstance.Position = new Vector2I(
-						coords.X * TileSize,
-						(coords.Y + BottomChunk * ChunkHeight) * TileSize
-					);
-					var animationPlayer = entityInstance.GetNode<AnimationPlayer>("AnimationPlayer");
-					animationPlayer?.Play("loop");
-					EntityContainer.AddChild(entityInstance);
-				}
-			}
-
+			LayerContainer.AddChild(chunk.TileMapLayer);
+			chunk.TileMapLayer.Position = new Vector2(0, BottomChunk * ChunkHeight * TileSize);
+			Chunks.Add(BottomChunk, chunk);
+			SpawnEntities(chunk);
 			BottomChunk++;
 		}
 
 		// TODO: Old layer cleanup, previous stuff was buggy.
 
 		base._Process(delta);
+	}
+
+	public void SpawnEntities(Chunk chunk)
+	{
+		for (int x = -ChunkHalfWidth; x < ChunkHalfWidth; x++)
+		for (int y = 0; y < ChunkHeight; y++)
+		{
+			var coords = new Vector2I(x, y);
+			int cell = chunk.TileMapLayer.GetCellSourceId(coords);
+			if (cell != -1)
+				continue;
+
+			int left = chunk.TileMapLayer.GetCellSourceId(
+				chunk.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.LeftSide)
+			);
+			int right = chunk.TileMapLayer.GetCellSourceId(
+				chunk.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.RightSide)
+			);
+			int up = chunk.TileMapLayer.GetCellSourceId(
+				chunk.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.TopSide)
+			);
+			int down = chunk.TileMapLayer.GetCellSourceId(
+				chunk.TileMapLayer.GetNeighborCell(coords, TileSet.CellNeighbor.BottomSide)
+			);
+
+			float spawnChance = Random.Randf();
+
+			if ((left != -1 || right != -1) && up == -1 && spawnChance < SanityItemSpawnChance)
+			{
+				var entityInstance =
+					Random.Randf() < SanityRestorePreference
+						? SanityRestoringScene.Instantiate<Node2D>()
+						: SanityDrainingScene.Instantiate<Node2D>();
+				entityInstance.Position = new Vector2I(
+					coords.X * TileSize,
+					(coords.Y + BottomChunk * ChunkHeight) * TileSize
+				);
+				// Flip sprite if attached to left wall
+				if (left != -1)
+				{
+					var sprite = entityInstance.GetNode<Sprite2D>("Sprite2D");
+					if (sprite != null)
+						sprite.FlipH = true;
+				}
+				EntityContainer.AddChild(entityInstance);
+			}
+			else if ((left == -1 && right == -1 && up == -1 && down == -1) && spawnChance < HallucinationSpawnChance)
+			{
+				var entityInstance =
+					Random.Randf() < 0.5
+						? Hallucination1Scene.Instantiate<Node2D>()
+						: Hallucination2Scene.Instantiate<Node2D>();
+				entityInstance.Position = new Vector2I(
+					coords.X * TileSize,
+					(coords.Y + BottomChunk * ChunkHeight) * TileSize
+				);
+				var animationPlayer = entityInstance.GetNode<AnimationPlayer>("AnimationPlayer");
+				animationPlayer?.Play("loop");
+				EntityContainer.AddChild(entityInstance);
+			}
+		}
 	}
 
 	public void ResetWorld()
@@ -236,7 +236,7 @@ public partial class WorldGenerator : Node2D
 				ChunkQueue.Enqueue(chunk);
 				RequestedChunks--;
 
-				GD.Print($"Generated layer in {Time.GetTicksMsec() - startTime}ms");
+				GD.Print($"Generated chunk in {Time.GetTicksMsec() - startTime}ms");
 			}
 		}
 	}
@@ -246,8 +246,8 @@ public partial class WorldGenerator : Node2D
 		int x = ((pos.X / TileSize) + ChunkHalfWidth);
 		int y = (pos.Y + 12) / TileSize;
 
-		// TODO: This won't work on layer boundaries.
-		// Still wrong past first layer!! Maths seems right, don't fuckin know
+		// TODO: This won't work on chunk boundaries.
+		// Still wrong past first chunk!! Maths seems right, don't fuckin know
 		Chunk chunk = Chunks[(pos.Y + 12) / TileSize];
 		if (chunk is null)
 		{
