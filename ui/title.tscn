@@ -194,10 +194,10 @@ event_guid = "{3c3b1f7c-5f7b-4618-a5a8-d670c45fedd5}"
 volume = 0.3
 
 [node name="Label" type="Label" parent="."]
-offset_left = 28.0
-offset_top = 748.0
-offset_right = 573.0
-offset_bottom = 1057.0
+offset_left = 34.0
+offset_top = 694.0
+offset_right = 721.0
+offset_bottom = 1055.0
 theme_override_colors/font_color = Color(0.8459966, 0.8470053, 0.9992116, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("2_mom7w")
@@ -207,7 +207,8 @@ W / Space (Hold) - Wallhang / Walljump
 A - Left
 D - Right
 S - Fast Fall
-Shift - Dash"
+Shift - Dash
+R - Reset"
 
 [connection signal="pressed" from="Control/BG/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="Control/BG/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
