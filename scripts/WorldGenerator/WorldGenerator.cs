@@ -125,7 +125,7 @@ public partial class WorldGenerator : Node2D
 
 				float spawnChance = Random.Randf();
 
-				if ((left != -1 || right != -1) && spawnChance < SanityItemSpawnChance)
+				if ((left != -1 || right != -1) && up == -1 && spawnChance < SanityItemSpawnChance)
 				{
 					var entityInstance =
 						Random.Randf() < SanityRestorePreference
