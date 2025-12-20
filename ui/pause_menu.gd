@@ -21,8 +21,9 @@ func close() -> void:
 func open() -> void:
 	show()
 	resume_button.grab_focus()
-	audio_player.stream = open_sound
-	audio_player.play()
+	# Triangle
+	# audio_player.stream = open_sound
+	# audio_player.play()
 	bgm.set_parameter("Paused", 1)
 
 
