@@ -154,7 +154,7 @@ func _physics_process(delta: float) -> void:
 	
 	# If you are falling at terminal velocity, sanity will go down
 	if velocity.y == TERMINAL_VELOCITY:
-		sanity -= 1.5
+		sanity -= 0.25
 		regen_on = false
 		$Regen.start()
 	
