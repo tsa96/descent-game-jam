@@ -115,4 +115,16 @@ libraries = {
 &"": SubResource("AnimationLibrary_fubkx")
 }
 
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="FmodBankLoader" type="FmodBankLoader" parent="Audio"]
+bank_paths = ["res://assets/audio/Desktop/Enemies.bank", "res://assets/audio/Desktop/Master.bank"]
+
+[node name="FmodListener2D" type="FmodListener2D" parent="Audio"]
+
+[node name="HallucinationAudioEventEmitter" type="FmodEventEmitter2D" parent="Audio"]
+event_name = "event:/HallucinationScream"
+event_guid = "{87ff95f2-b1b1-4064-8e7a-05954e4d7276}"
+volume = 0.7
+
 [connection signal="body_entered" from="Area" to="Area" method="_on_body_entered"]
